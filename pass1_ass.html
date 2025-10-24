@@ -8,8 +8,8 @@
     :root{
       --bg: #f8fafc;
       --card: #ffffff;
-      --accent1: #5b21b6; /* indigo */
-      --accent2: #0ea5a4; /* teal */
+      --accent1: #5b21b6;
+      --accent2: #0ea5a4;
       --muted: #6b7280;
       --glass: rgba(255,255,255,0.7);
       --success: #16a34a;
@@ -34,6 +34,68 @@
 
     .notice{
       background:#fff7ed;border-left:6px solid #f59e0b;padding:12px;border-radius:8px;margin:20px 0;color:#92400e;
+    }
+
+    .download-section{
+      background:linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+      color:white;
+      padding:18px;
+      border-radius:12px;
+      margin:20px 0;
+      box-shadow:0 4px 12px rgba(14,165,233,0.2);
+    }
+    .download-header{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .download-icon{
+      width:40px;
+      height:40px;
+      background:rgba(255,255,255,0.2);
+      border-radius:10px;
+      display:grid;
+      place-items:center;
+      font-size:22px;
+    }
+    .download-title{
+      font-weight:700;
+      font-size:16px;
+    }
+    .download-desc{
+      font-size:13px;
+      opacity:0.9;
+      margin-top:2px;
+    }
+    .download-buttons{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .download-btn{
+      background:rgba(255,255,255,0.95);
+      color:#0369a1;
+      border:none;
+      padding:8px 16px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+      transition:all 0.2s;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    }
+    .download-btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 4px 10px rgba(0,0,0,0.15);
+    }
+    .download-all-btn{
+      background:#16a34a;
+      color:white;
+    }
+    .download-all-btn:hover{
+      background:#15803d;
     }
 
     /* phase block */
@@ -109,8 +171,10 @@
 
     /* responsive */
     @media (max-width:720px){
+      body{padding:16px}
       .phase-header h2{font-size:16px}
-      .title{font-size:22px}
+      .title{font-size:24px}
+      .download-header{flex-direction:column;align-items:flex-start}
     }
   </style>
 </head>
@@ -129,6 +193,31 @@
       </div>
     </div>
 
+    <!-- Download Section -->
+    <div class="download-section">
+      <div class="download-header">
+        <div class="download-icon">📥</div>
+        <div>
+          <div class="download-title">Download Test Files</div>
+          <div class="download-desc">Get sample .asm files to test the Pass One algorithm with the Java code below</div>
+        </div>
+      </div>
+      <div class="download-buttons">
+        <button onclick="downloadFile('program1.asm')" class="download-btn">
+          📄 program1.asm
+        </button>
+        <button onclick="downloadFile('program2.asm')" class="download-btn">
+          📄 program2.asm
+        </button>
+        <button onclick="downloadFile('program3.asm')" class="download-btn">
+          📄 program3.asm
+        </button>
+        <button onclick="downloadAllFiles()" class="download-btn download-all-btn">
+          ⬇️ Download All
+        </button>
+      </div>
+    </div>
+
     <!-- PHASES -->
     <div id="phases-root"></div>
 
@@ -137,6 +226,7 @@
       <p><strong>1.</strong> Start with: "Pass One has several phases — Initialization, Main loop, Directives, Machine instructions, Literal assignment, Completion."</p>
       <p><strong>2.</strong> Click through steps and read the detailed blocks.</p>
       <p><strong>3.</strong> Use the Java code below as the real implementation reference.</p>
+      <p><strong>4.</strong> Download the .asm files above to test the Java code yourself!</p>
     </div>
 
     <!-- Java Code Panel -->
@@ -409,12 +499,6 @@ public class PassOne {
             } else if (data instanceof Map<?, ?>) {
                 for (Map.Entry<?, ?> e : ((Map<?, ?>) data).entrySet())
                     writer.write(e.getKey() + " = " + e.getValue() + "\\n");
-            } else if (data instanceof List<?>) {
-                for (Object l : (List<?>) data)
-                    writer.write(l.toString() + "\\n");
-            } else if (data instanceof List<?>) {
-                for (Literal l : (List<Literal>) data)
-                    writer.write(l.value + " = " + l.address + "\\n");
             }
         }
     }
@@ -959,6 +1043,23 @@ function createPhaseElement(phaseObj, pIndex) {
     root.appendChild(el);
   });
 })();
+
+function downloadFile(filename) {
+  const a = document.createElement('a');
+  a.href = filename;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function downloadAllFiles() {
+  const files = ['program1.asm', 'program2.asm', 'program3.asm'];
+  files.forEach((file, index) => {
+    setTimeout(() => downloadFile(file), index * 300);
+  });
+}
+
 
 /* ---------- Copy & Toggle Java code ---------- */
 const copyBtn = document.getElementById('copyBtn');
