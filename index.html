@@ -1,39 +1,435 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>HTML File Viewer</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LP1 Practicals - Algorithm Hub</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
-        button {
-            margin: 5px;
-            padding: 10px 20px;
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.95;
+            font-weight: 400;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.85;
+            margin-top: 8px;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 28px;
             cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: fadeInUp 0.6s ease;
+            position: relative;
+            overflow: hidden;
         }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Viewer Section */
+        .viewer-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .viewer-section.active {
+            display: block;
+        }
+
+        .viewer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 16px;
+        }
+
+        .viewer-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+
         iframe {
             width: 100%;
-            height: 500px;
-            border: 1px solid #ccc;
-            margin-top: 20px;
+            height: 80vh;
+            border: none;
+            border-radius: 8px;
+            background: white;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Loading indicator */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            iframe {
+                height: 60vh;
+            }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+
+        .empty-state h2 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            opacity: 0.8;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
-    <h1>View HTML Files</h1>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎓 LP1 Practicals</h1>
+            <p>Master System Programming & Compiler Construction</p>
+            <p class="subtitle">Interactive algorithms, pseudocodes & step-by-step explanations</p>
+        </div>
 
-    <!-- Buttons to load different files -->
-    <button onclick="loadFile('pass1_ass.html')">Pass 1</button>
-    <button onclick="loadFile('pass2_ass.html')">Pass 2</button>
-    <!-- <button onclick="loadFile('pass3.html')">Pass 3</button> -->
+        <!-- Cards Grid -->
+        <div class="cards-grid" id="cardsGrid">
+            <div class="card" onclick="loadPractical('pass1_ass.html', 'Pass One - Assembler')">
+                <div class="card-icon">📝</div>
+                <div class="card-title">Pass One</div>
+                <div class="card-description">
+                    Build Symbol Table, Literal Table, and generate Intermediate Code. Learn the complete first pass algorithm step-by-step.
+                </div>
+                <div class="card-meta">
+                    <span class="tag">Assembler</span>
+                    <span class="tag">16 Steps</span>
+                    <span class="tag">Interactive</span>
+                </div>
+            </div>
 
-    <!-- Iframe to display HTML files -->
-    <iframe id="viewer"></iframe>
+            <div class="card" onclick="loadPractical('pass2_ass.html', 'Pass Two - Assembler')">
+                <div class="card-icon">⚙️</div>
+                <div class="card-title">Pass Two</div>
+                <div class="card-description">
+                    Generate Machine Code from Intermediate Code. Understand address resolution and final code generation.
+                </div>
+                <div class="card-meta">
+                    <span class="tag">Assembler</span>
+                    <span class="tag">17 Steps</span>
+                    <span class="tag">Interactive</span>
+                </div>
+            </div>
+
+            <!-- Placeholder for future practicals -->
+            <div class="card" style="opacity: 0.6; cursor: not-allowed;">
+                <div class="card-icon">🔄</div>
+                <div class="card-title">Macro Processor</div>
+                <div class="card-description">
+                    Coming soon! Learn macro definition, expansion, and nested macro processing.
+                </div>
+                <div class="card-meta">
+                    <span class="tag">Coming Soon</span>
+                </div>
+            </div>
+
+            <div class="card" style="opacity: 0.6; cursor: not-allowed;">
+                <div class="card-icon">🔗</div>
+                <div class="card-title">Linker & Loader</div>
+                <div class="card-description">
+                    Coming soon! Understand linking, loading, and program relocation.
+                </div>
+                <div class="card-meta">
+                    <span class="tag">Coming Soon</span>
+                </div>
+            </div>
+
+            <div class="card" style="opacity: 0.6; cursor: not-allowed;">
+                <div class="card-icon">📊</div>
+                <div class="card-title">Scheduling Algorithms</div>
+                <div class="card-description">
+                    Coming soon! Explore CPU scheduling algorithms with visualizations.
+                </div>
+                <div class="card-meta">
+                    <span class="tag">Coming Soon</span>
+                </div>
+            </div>
+
+            <div class="card" style="opacity: 0.6; cursor: not-allowed;">
+                <div class="card-icon">💾</div>
+                <div class="card-title">Page Replacement</div>
+                <div class="card-description">
+                    Coming soon! Learn memory management and page replacement strategies.
+                </div>
+                <div class="card-meta">
+                    <span class="tag">Coming Soon</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Viewer Section -->
+        <div class="viewer-section" id="viewerSection">
+            <div class="viewer-header">
+                <div class="viewer-title">
+                    <span id="viewerIcon">📝</span>
+                    <span id="viewerTitleText">Practical Viewer</span>
+                </div>
+                <button class="close-btn" onclick="closePractical()">✕ Close</button>
+            </div>
+            <div id="loadingIndicator" class="loading">
+                <div class="spinner"></div>
+                <p>Loading practical...</p>
+            </div>
+            <iframe id="practicalViewer" style="display: none;" onload="hideLoading()"></iframe>
+        </div>
+    </div>
 
     <script>
-        function loadFile(filename) {
-            document.getElementById('viewer').src = filename;
+        function loadPractical(filename, title) {
+            const viewerSection = document.getElementById('viewerSection');
+            const iframe = document.getElementById('practicalViewer');
+            const titleText = document.getElementById('viewerTitleText');
+            const loading = document.getElementById('loadingIndicator');
+            const icon = document.getElementById('viewerIcon');
+            
+            // Show viewer section
+            viewerSection.classList.add('active');
+            
+            // Show loading
+            loading.style.display = 'block';
+            iframe.style.display = 'none';
+            
+            // Set title and icon
+            titleText.textContent = title;
+            icon.textContent = title.includes('Pass One') ? '📝' : '⚙️';
+            
+            // Load file
+            iframe.src = filename;
+            
+            // Smooth scroll to viewer
+            setTimeout(() => {
+                viewerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
         }
+
+        function hideLoading() {
+            document.getElementById('loadingIndicator').style.display = 'none';
+            document.getElementById('practicalViewer').style.display = 'block';
+        }
+
+        function closePractical() {
+            const viewerSection = document.getElementById('viewerSection');
+            viewerSection.classList.remove('active');
+            document.getElementById('practicalViewer').src = '';
+            
+            // Scroll back to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Add staggered animation to cards
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
     </script>
 </body>
 </html>
