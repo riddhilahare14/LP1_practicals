@@ -93,6 +93,15 @@
             box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
         }
 
+        .card.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .card.disabled:hover {
+            transform: none;
+        }
+
         .card-icon {
             width: 56px;
             height: 56px;
@@ -133,6 +142,17 @@
             border-radius: 6px;
             font-size: 12px;
             font-weight: 500;
+        }
+
+        .tag.new {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         /* Viewer Section */
@@ -243,6 +263,24 @@
             margin: 0 auto 16px;
         }
 
+        .creator-credit {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    animation: fadeInUp 1s ease;
+}
+
+.creator-name {
+    font-weight: 700;
+    background: linear-gradient(135deg, #10b981, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -262,23 +300,6 @@
                 height: 60vh;
             }
         }
-
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: white;
-        }
-
-        .empty-state h2 {
-            font-size: 24px;
-            margin-bottom: 12px;
-        }
-
-        .empty-state p {
-            opacity: 0.8;
-            font-size: 16px;
-        }
     </style>
 </head>
 <body>
@@ -292,7 +313,8 @@
 
         <!-- Cards Grid -->
         <div class="cards-grid" id="cardsGrid">
-            <div class="card" onclick="loadPractical('pass1_ass.html', 'Pass One - Assembler')">
+            <!-- Assembler Pass 1 -->
+            <div class="card" onclick="loadPractical('pass1_ass.html', 'Pass One - Assembler', '📝')">
                 <div class="card-icon">📝</div>
                 <div class="card-title">Pass One Assembler</div>
                 <div class="card-description">
@@ -305,7 +327,8 @@
                 </div>
             </div>
 
-            <div class="card" onclick="loadPractical('pass2_ass.html', 'Pass Two - Assembler')">
+            <!-- Assembler Pass 2 -->
+            <div class="card" onclick="loadPractical('pass2_ass.html', 'Pass Two - Assembler', '⚙️')">
                 <div class="card-icon">⚙️</div>
                 <div class="card-title">Pass Two Assembler</div>
                 <div class="card-description">
@@ -318,19 +341,36 @@
                 </div>
             </div>
 
-            <!-- Placeholder for future practicals -->
-            <div class="card" style="opacity: 0.6; cursor: not-allowed;">
+            <!-- Macro Pass 1 - NEW! -->
+            <div class="card" onclick="loadPractical('pass1_macro.html', 'Pass One - Macro Processor', '🔄')">
                 <div class="card-icon">🔄</div>
-                <div class="card-title">Macro Processor</div>
+                <div class="card-title">Pass One Macro</div>
                 <div class="card-description">
-                    Coming soon! Learn macro definition, expansion, and nested macro processing.
+                    Build Macro Name Table (MNT), Macro Definition Table (MDT), and handle macro definitions with parameters.
                 </div>
                 <div class="card-meta">
-                    <span class="tag">Coming Soon</span>
+                    <span class="tag new">NEW</span>
+                    <span class="tag">Macro Processor</span>
+                    <span class="tag">18 Steps</span>
                 </div>
             </div>
 
-            <div class="card" style="opacity: 0.6; cursor: not-allowed;">
+            <!-- Macro Pass 2 - NEW! -->
+            <div class="card" onclick="loadPractical('pass2_macro.html', 'Pass Two - Macro Processor', '🔧')">
+                <div class="card-icon">🔧</div>
+                <div class="card-title">Pass Two Macro</div>
+                <div class="card-description">
+                    Expand macro calls using APTAB, handle positional & keyword parameters, and generate final expanded code.
+                </div>
+                <div class="card-meta">
+                    <span class="tag new">NEW</span>
+                    <span class="tag">Macro Processor</span>
+                    <span class="tag">22 Steps</span>
+                </div>
+            </div>
+
+            <!-- Coming Soon Placeholders -->
+            <div class="card disabled">
                 <div class="card-icon">🔗</div>
                 <div class="card-title">Linker & Loader</div>
                 <div class="card-description">
@@ -341,7 +381,7 @@
                 </div>
             </div>
 
-            <div class="card" style="opacity: 0.6; cursor: not-allowed;">
+            <div class="card disabled">
                 <div class="card-icon">📊</div>
                 <div class="card-title">Scheduling Algorithms</div>
                 <div class="card-description">
@@ -352,11 +392,22 @@
                 </div>
             </div>
 
-            <div class="card" style="opacity: 0.6; cursor: not-allowed;">
+            <div class="card disabled">
                 <div class="card-icon">💾</div>
                 <div class="card-title">Page Replacement</div>
                 <div class="card-description">
                     Coming soon! Learn memory management and page replacement strategies.
+                </div>
+                <div class="card-meta">
+                    <span class="tag">Coming Soon</span>
+                </div>
+            </div>
+
+            <div class="card disabled">
+                <div class="card-icon">🧵</div>
+                <div class="card-title">Mutex & Semaphores</div>
+                <div class="card-description">
+                    Coming soon! Master synchronization primitives and concurrent programming.
                 </div>
                 <div class="card-meta">
                     <span class="tag">Coming Soon</span>
@@ -379,10 +430,14 @@
             </div>
             <iframe id="practicalViewer" style="display: none;" onload="hideLoading()"></iframe>
         </div>
+        <div class="creator-credit">
+          Crafted with ❤️ by <span class="creator-name">Riddhi Lahare</span>
+      </div>
+      
     </div>
 
     <script>
-        function loadPractical(filename, title) {
+        function loadPractical(filename, title, iconEmoji) {
             const viewerSection = document.getElementById('viewerSection');
             const iframe = document.getElementById('practicalViewer');
             const titleText = document.getElementById('viewerTitleText');
@@ -398,7 +453,7 @@
             
             // Set title and icon
             titleText.textContent = title;
-            icon.textContent = title.includes('Pass One') ? '📝' : '⚙️';
+            icon.textContent = iconEmoji;
             
             // Load file
             iframe.src = filename;

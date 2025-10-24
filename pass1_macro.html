@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Macro Processor Pass-I — Flowchart (HTML/CSS)</title>
+  <style>
+    :root{
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --accent1: #7c3aed;
+      --accent2: #06b6d4;
+      --muted: #6b7280;
+      --glass: rgba(255,255,255,0.7);
+      --success: #16a34a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#faf5ff 0%, #f0fdfa 100%);
+      color:#0f172a;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:28px;
+    }
+
+    .container{max-width:1100px;margin:0 auto;}
+
+    .header{text-align:center;margin-bottom:18px}
+    .title{font-size:32px;font-weight:700;color:#0f172a;margin:0}
+    .subtitle{color:var(--accent1);margin-top:6px;font-weight:600}
+    .hint{color:var(--muted);font-size:13px;margin-top:8px}
+
+    .notice{
+      background:#fef3c7;border-left:6px solid #f59e0b;padding:12px;border-radius:8px;margin:20px 0;color:#92400e;
+    }
+
+    .download-section{
+      background:linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+      color:white;
+      padding:18px;
+      border-radius:12px;
+      margin:20px 0;
+      box-shadow:0 4px 12px rgba(124,58,237,0.2);
+    }
+    .download-header{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .download-icon{
+      width:40px;
+      height:40px;
+      background:rgba(255,255,255,0.2);
+      border-radius:10px;
+      display:grid;
+      place-items:center;
+      font-size:22px;
+    }
+    .download-title{
+      font-weight:700;
+      font-size:16px;
+    }
+    .download-desc{
+      font-size:13px;
+      opacity:0.9;
+      margin-top:2px;
+    }
+    .download-buttons{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .download-btn{
+      background:rgba(255,255,255,0.95);
+      color:#6b21a8;
+      border:none;
+      padding:8px 16px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+      transition:all 0.2s;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    }
+    .download-btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 4px 10px rgba(0,0,0,0.15);
+    }
+    .download-all-btn{
+      background:#16a34a;
+      color:white;
+    }
+    .download-all-btn:hover{
+      background:#15803d;
+    }
+
+    .phase{
+      margin-bottom:22px;
+      border-radius:10px;
+      overflow:hidden;
+      box-shadow:0 8px 24px rgba(2,6,23,0.06);
+    }
+    .phase-header{
+      padding:14px 16px;
+      display:flex;align-items:center;gap:12px;
+      color:white;background:linear-gradient(90deg,#7c3aed,#a855f7);
+    }
+    .phase-header h2{margin:0;font-size:18px}
+    .phase-body{background:var(--card);padding:18px;border-top:1px solid #f3e8ff}
+
+    .step{
+      margin-bottom:14px;
+    }
+    .step-button{
+      width:100%;
+      display:flex;align-items:flex-start;gap:12px;
+      background: #faf5ff;border:1px solid #f3e8ff;padding:12px;border-radius:10px;
+      cursor:pointer;transition:all .18s ease;
+    }
+    .step-button:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(16,24,40,0.06)}
+    .step-button.current{border-color:#7c3aed;background:#f3e8ff;box-shadow:0 10px 30px rgba(124,58,237,0.08)}
+    .step-button.completed{border-color:#bbf7d0;background:#f0fdf4}
+
+    .icon{
+      margin-top:4px;
+      width:22px;height:22px;border-radius:999px;display:grid;place-items:center;background:#fff;border:1px solid #e6edf6;color:#9ca3af;
+      font-weight:700;font-size:12px;
+    }
+    .icon.completed{background: #ecfdf5;color:var(--success);border-color: #bbf7d0}
+    .step-content{flex:1}
+    .step-title{font-size:15px;font-weight:700;margin:0 0 4px 0;color:#0f172a}
+    .step-desc{margin:0;font-size:13px;color:var(--muted)}
+
+    .chev{
+      width:22px;height:22px;color:#9ca3af;transition:transform .18s ease;flex-shrink:0;
+    }
+    .chev.rotate{transform:rotate(90deg)}
+
+    .details{
+      margin-left:46px;margin-top:12px;padding:14px;border-radius:10px;background:#faf5ff;border:1px solid #f3e8ff;animation:fadeIn .12s ease;
+    }
+    .block{margin-bottom:12px}
+    .block h4{margin:0 0 8px 0;font-size:14px;color:#0f172a}
+    .list{padding-left:18px;margin:0;color:#0f172a}
+    .list li{margin-bottom:6px;font-size:13px;color:#083344}
+    pre.code{
+      background:#0f172a;color:#c4b5fd;padding:12px;border-radius:8px;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    }
+    .example{background:#fef3c7;border:1px solid #fde68a;padding:10px;border-radius:8px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:#221e3b}
+
+    .connector{display:flex;justify-content:center;margin:14px 0}
+    .connector .line{width:2px;height:44px;background:#ddd6fe;border-radius:2px}
+
+    .howto{background:linear-gradient(90deg,#7c3aed,#06b6d4);color:white;padding:16px;border-radius:10px;margin-top:18px}
+    .howto p{margin:6px 0;font-size:14px}
+
+    .code-panel{
+      margin-top:18px;padding:12px;border-radius:8px;background:#111827;color:#f8fafc;border:1px solid rgba(255,255,255,0.04);
+    }
+    .code-header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .small-btn{background:rgba(255,255,255,0.06);border:none;color:white;padding:8px 10px;border-radius:8px;cursor:pointer}
+    .copy-msg{font-size:13px;color:#bbf7d0;margin-left:8px}
+
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none}}
+
+    @media (max-width:720px){
+      body{padding:16px}
+      .phase-header h2{font-size:16px}
+      .title{font-size:24px}
+      .download-header{flex-direction:column;align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">Macro Processor Pass-I Algorithm</h1>
+      <div class="subtitle">Step-by-Step Flowchart</div>
+      <div class="hint">Click a step to open details. Use the Java panel below to view your Pass-I implementation.</div>
+    </div>
+
+    <div class="notice">
+      <div style="font-weight:600">📝 For Exam/Viva:</div>
+      <div style="font-size:13px;margin-top:6px;color:#7a4f1a">
+        Follow the exact sequence when explaining. Each step is numbered and flows logically to the next.
+      </div>
+    </div>
+
+    <div class="download-section">
+      <div class="download-header">
+        <div class="download-icon">📥</div>
+        <div>
+          <div class="download-title">Download Test Files</div>
+          <div class="download-desc">Get sample input.asm files to test the Macro Pass-I algorithm</div>
+        </div>
+      </div>
+      <div class="download-buttons">
+        <button onclick="downloadFile('input.asm')" class="download-btn">
+          📄 input.asm
+        </button>
+        <button onclick="downloadFile('input2.asm')" class="download-btn">
+          📄 input2.asm
+        </button>
+        <button onclick="downloadAllFiles()" class="download-btn download-all-btn">
+          ⬇️ Download All
+        </button>
+      </div>
+    </div>
+
+    <div id="phases-root"></div>
+
+    <div class="howto">
+      <h3 style="margin:0 0 8px 0">🎓 How to Use This for Viva/Exam</h3>
+      <p><strong>1.</strong> Start with: "Pass-I has phases — Initialization, Main Processing, Macro Definition, and Completion."</p>
+      <p><strong>2.</strong> Click through steps and read the detailed blocks.</p>
+      <p><strong>3.</strong> Use the Java code below as the real implementation reference.</p>
+      <p><strong>4.</strong> Download the .asm files above to test the Java code yourself!</p>
+    </div>
+
+    <div class="code-panel" aria-live="polite">
+      <div class="code-header">
+        <div style="display:flex;align-items:center;gap:12px">
+          <strong>PassOne.java</strong>
+          <span style="opacity:0.8;font-size:13px">(Macro Processor Pass-I)</span>
+        </div>
+        <div style="display:flex;align-items:center">
+          <button id="copyBtn" class="small-btn">Copy code</button>
+          <button id="toggleBtn" class="small-btn" style="margin-left:8px">Hide</button>
+        </div>
+      </div>
+
+      <div id="javaBlock" style="margin-top:10px;max-height:420px;overflow:auto;">
+        <pre id="javaCode" style="white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px">import java.io.*;
+import java.util.*;
+
+public class PassOne {
+
+    // DATA STRUCTURES
+    static class MNTEntry {
+        String name;
+        int pp, kp, mdtp, kpdtp;
+        MNTEntry(String name, int pp, int kp, int mdtp, int kpdtp) {
+            this.name = name; this.pp = pp; this.kp = kp;
+            this.mdtp = mdtp; this.kpdtp = kpdtp;
+        }
+        public String toString() {
+            return name + " " + pp + " " + kp + " " + mdtp + " " + kpdtp;
+        }
+    }
+
+    static class KPEntry {
+        String param, defaultVal;
+        KPEntry(String param, String defaultVal) {
+            this.param = param; this.defaultVal = defaultVal;
+        }
+        public String toString() {
+            return param + " = " + (defaultVal.isEmpty() ? "-" : defaultVal);
+        }
+    }
+
+    // TABLES
+    static List<MNTEntry> MNT = new ArrayList<>();
+    static List<KPEntry> KPDTAB = new ArrayList<>();
+    static List<String> MDT = new ArrayList<>();
+    static List<String> IC = new ArrayList<>();
+    static Map<String, Integer> PNTAB = new LinkedHashMap<>();
+
+    // MAIN
+    public static void main(String[] args) throws IOException {
+        String inputFile = "input.asm";
+
+        processFile(inputFile);
+
+        writeFile("MNT.txt", MNT);
+        writeFile("KPDTAB.txt", KPDTAB);
+        writeFile("MDT.txt", MDT);
+        writeFile("IC.txt", IC);
+
+        System.out.println("Pass-I Macro Processing Completed!\\n");
+        System.out.println("MNT: " + MNT);
+        System.out.println("KPDTAB: " + KPDTAB);
+        System.out.println("MDT: " + MDT);
+        System.out.println("IC: " + IC);
+    }
+
+    // PROCESS INPUT FILE
+    static void processFile(String file) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String line;
+        boolean inMacro = false;
+        int mdtp = 1, kpdtp = 1;
+        String currentMacro = "";
+        int pp = 0, kp = 0;
+
+        while ((line = br.readLine()) != null) {
+            line = line.trim();
+            if (line.isEmpty()) continue;
+
+            if (line.equalsIgnoreCase("MACRO")) {
+                inMacro = true;
+                PNTAB.clear();
+                pp = kp = 0;
+                continue;
+            }
+
+            if (inMacro) {
+                if (currentMacro.isEmpty()) {
+                    processMacroPrototype(line, mdtp, kpdtp);
+                    currentMacro = line.split("\\\\s+")[0];
+                    kpdtp += kpCount(line);
+                    pp = ppCount(line);
+                    kp = kpCount(line);
+                } else if (line.equalsIgnoreCase("MEND")) {
+                    MDT.add("MEND");
+                    mdtp++;
+                    inMacro = false;
+                    currentMacro = "";
+                } else {
+                    MDT.add(replaceParams(line));
+                    mdtp++;
+                }
+            } else {
+                IC.add(line);
+            }
+        }
+
+        br.close();
+    }
+
+    // PROCESS MACRO PROTOTYPE
+    static void processMacroPrototype(String line, int mdtp, int kpdtp) {
+        String[] parts = line.split("\\\\s+");
+        String name = parts[0];
+        String[] params = parts[1].split(",");
+
+        int pp = 0, kp = 0;
+        for (int i = 0; i < params.length; i++) {
+            String param = params[i];
+            if (param.contains("=")) {
+                String[] kv = param.split("=");
+                PNTAB.put(kv[0], i + 1);
+                KPDTAB.add(new KPEntry(kv[0], kv.length > 1 ? kv[1] : ""));
+                kp++;
+            } else {
+                PNTAB.put(param, i + 1);
+                pp++;
+            }
+        }
+
+        MNT.add(new MNTEntry(name, pp, kp, mdtp, kpdtp));
+    }
+
+    // REPLACE PARAMETERS IN LINE
+    static String replaceParams(String line) {
+        for (Map.Entry<String, Integer> e : PNTAB.entrySet()) {
+            if (line.contains(e.getKey())) {
+                line = line.replace(e.getKey(), "(P," + e.getValue() + ")");
+            }
+        }
+        return line;
+    }
+
+    // COUNT PARAMETERS
+    static int ppCount(String line) {
+        int count = 0;
+        for (String param : line.split("\\\\s+")[1].split(",")) {
+            if (!param.contains("=")) count++;
+        }
+        return count;
+    }
+
+    static int kpCount(String line) {
+        int count = 0;
+        for (String param : line.split("\\\\s+")[1].split(",")) {
+            if (param.contains("=")) count++;
+        }
+        return count;
+    }
+
+    // WRITE TABLE TO FILE
+    static void writeFile(String file, List<?> data) throws IOException {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
+            for (Object o : data) pw.println(o);
+        }
+    }
+}</pre>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+const algorithm = [
+  {
+    phase: "INITIALIZATION PHASE",
+    steps: [
+      {
+        title: "Step 1: Initialize Data Structures",
+        description: "Create empty tables to store macro information",
+        details: [
+          "Create MNT (Macro Name Table) - Stores macro names and metadata",
+          "Create KPDTAB (Keyword Parameter Default Table) - Stores keyword parameters with defaults",
+          "Create MDT (Macro Definition Table) - Stores macro body with parameter indices",
+          "Create PNTAB (Parameter Name Table) - Temporary table for current macro parameters",
+          "Create IC (Intermediate Code) - Stores non-macro code lines",
+          "Initialize counters: MDTP=1 (MDT pointer), KPDTP=1 (KPDTAB pointer)"
+        ],
+        code: `MNT = []  // Empty initially
+KPDTAB = []  // Empty initially
+MDT = []  // Empty initially
+PNTAB = {}  // Cleared for each macro
+IC = []  // Empty initially
+MDTP = 1  // Points to next MDT entry
+KPDTP = 1  // Points to next KPDTAB entry`,
+        example: "All tables initialized and ready for macro processing!"
+      },
+      {
+        title: "Step 2: Open Source File",
+        description: "Read the assembly source file containing macros",
+        details: [
+          "Open file 'input.asm' for reading",
+          "Prepare to read line by line",
+          "Initialize flags: inMacro = false"
+        ],
+        code: `BufferedReader reader = new BufferedReader(
+    new FileReader("input.asm")
+);
+boolean inMacro = false;
+String currentMacro = "";`,
+        example: "File opened: input.asm"
+      }
+    ]
+  },
+  {
+    phase: "MAIN PROCESSING LOOP",
+    steps: [
+      {
+        title: "Step 3: Read Next Line",
+        description: "Get one line from the source file",
+        details: [
+          "Read one line from the file",
+          "Remove leading/trailing whitespace",
+          "Skip if line is empty",
+          "Continue until end of file"
+        ],
+        code: `while ((line = readLine()) != null) {
+    line = line.trim();
+    if (line.isEmpty()) continue;
+    // Process this line...
+}`,
+        example: "Line read: 'MACRO'"
+      },
+      {
+        title: "Step 4: Check for MACRO Directive",
+        description: "Determine if this line starts a macro definition",
+        details: [
+          "Check if line equals 'MACRO'",
+          "If YES:",
+          "  - Set inMacro = true",
+          "  - Clear PNTAB (prepare for new macro parameters)",
+          "  - Reset pp=0, kp=0 counters",
+          "  - Continue to next line (read macro prototype)",
+          "If NO → Go to Step 5"
+        ],
+        code: `if (line.equalsIgnoreCase("MACRO")) {
+    inMacro = true;
+    PNTAB.clear();
+    pp = 0; kp = 0;
+    continue;  // Read next line
+}`,
+        example: "MACRO found → Start macro definition mode"
+      },
+      {
+        title: "Step 5: Check Processing Mode",
+        description: "Determine if we're inside or outside macro definition",
+        details: [
+          "If inMacro == true:",
+          "  - We're processing macro definition",
+          "  - Go to Step 6 (Process Macro Lines)",
+          "If inMacro == false:",
+          "  - This is normal code (not macro)",
+          "  - Add line to IC (Intermediate Code)",
+          "  - Continue to next line (Step 3)"
+        ],
+        code: `if (inMacro) {
+    // Process macro definition lines
+    goto Step 6;
+} else {
+    IC.add(line);  // Normal code
+    goto Step 3;
+}`,
+        example: "Not in macro → Add 'START 200' to IC"
+      }
+    ]
+  },
+  {
+    phase: "MACRO DEFINITION PROCESSING",
+    steps: [
+      {
+        title: "Step 6: Check Macro Line Type",
+        description: "Identify if this is prototype, body, or MEND",
+        details: [
+          "If currentMacro is empty:",
+          "  - This is the MACRO PROTOTYPE line",
+          "  - Go to Step 7 (Process Prototype)",
+          "If line equals 'MEND':",
+          "  - This is end of macro",
+          "  - Go to Step 10 (Process MEND)",
+          "Otherwise:",
+          "  - This is a macro body line",
+          "  - Go to Step 9 (Process Body)"
+        ],
+        code: `if (currentMacro.isEmpty()) {
+    // This is prototype
+    goto Step 7;
+} else if (line.equals("MEND")) {
+    goto Step 10;
+} else {
+    // Macro body line
+    goto Step 9;
+}`,
+        example: "First line after MACRO → Process as prototype"
+      },
+      {
+        title: "Step 7: Parse Macro Prototype",
+        description: "Extract macro name and parameters from prototype line",
+        details: [
+          "Split line by whitespace to get tokens",
+          "First token = Macro Name",
+          "Second token = Parameter list (comma-separated)",
+          "Split parameter list by commas",
+          "For each parameter:",
+          "  - If contains '=' → Keyword parameter (has default)",
+          "  - If no '=' → Positional parameter (no default)"
+        ],
+        code: `tokens = line.split by whitespace
+macroName = tokens[0]
+paramList = tokens[1].split by comma
+parameters = []
+for each param in paramList:
+    parameters.add(param)`,
+        example: "INCR &X,&Y=5 → name='INCR', params=['&X', '&Y=5']"
+      },
+      {
+        title: "Step 8: Process Parameters & Build Tables",
+        description: "Add parameters to PNTAB and KPDTAB, create MNT entry",
+        details: [
+          "Initialize pp=0 (positional param count), kp=0 (keyword param count)",
+          "For each parameter (index i):",
+          "  - If contains '=':",
+          "    → Split by '=' to get [name, default]",
+          "    → Add to PNTAB: PNTAB[name] = i+1",
+          "    → Add to KPDTAB: (name, default)",
+          "    → Increment kp",
+          "  - If no '=':",
+          "    → Add to PNTAB: PNTAB[name] = i+1",
+          "    → Increment pp",
+          "Create MNT entry: (macroName, pp, kp, MDTP, KPDTP)",
+          "Update KPDTP = KPDTP + kp",
+          "Store currentMacro = macroName"
+        ],
+        code: `pp = 0; kp = 0;
+for (i=0; i<params.length; i++) {
+    if (param contains '=') {
+        [name, default] = param.split('=')
+        PNTAB[name] = i+1
+        KPDTAB.add(name, default)
+        kp++
+    } else {
+        PNTAB[param] = i+1
+        pp++
+    }
+}
+MNT.add(macroName, pp, kp, MDTP, KPDTP)
+KPDTP += kp
+currentMacro = macroName`,
+        example: "&X → PNTAB['&X']=1, pp=1\\n&Y=5 → PNTAB['&Y']=2, KPDTAB['&Y'='5'], kp=1"
+      },
+      {
+        title: "Step 9: Process Macro Body Line",
+        description: "Replace parameters with indices and add to MDT",
+        details: [
+          "For each parameter in PNTAB:",
+          "  - If parameter appears in current line:",
+          "    → Replace parameter with (P,index)",
+          "    → index = PNTAB[parameter]",
+          "Add modified line to MDT",
+          "Increment MDTP",
+          "Return to Step 3 (read next line)"
+        ],
+        code: `for each (param, index) in PNTAB:
+    if (line contains param):
+        line = line.replace(param, "(P," + index + ")")
+        
+MDT.add(line)
+MDTP++
+goto Step 3`,
+        example: "MOVER AREG, &X → MOVER AREG, (P,1)\\nAdded to MDT"
+      },
+      {
+        title: "Step 10: Process MEND",
+        description: "Mark end of macro definition",
+        details: [
+          "Add 'MEND' to MDT",
+          "Increment MDTP",
+          "Set inMacro = false (exit macro mode)",
+          "Clear currentMacro = ''",
+          "Return to Step 3 (continue reading file)"
+        ],
+        code: `MDT.add("MEND")
+MDTP++
+inMacro = false
+currentMacro = ""
+goto Step 3`,
+        example: "MEND added to MDT → Macro definition complete"
+      }
+    ]
+  },
+  {
+    phase: "COMPLETION PHASE",
+    steps: [
+      {
+        title: "Step 11: End of File Reached",
+        description: "All lines processed, prepare output",
+        details: [
+          "No more lines to read",
+          "All macros have been processed",
+          "All non-macro code in IC",
+          "Proceed to output generation"
+        ],
+        code: `// End of while loop
+print "File processing complete"
+goto Step 12`,
+        example: "All lines processed successfully!"
+      },
+      {
+        title: "Step 12: Display Results",
+        description: "Print all generated tables",
+        details: [
+          "Print MNT (Macro Name Table)",
+          "  - Format: Name PP KP MDTP KPDTP",
+          "Print KPDTAB (Keyword Parameter Default Table)",
+          "  - Format: Parameter = Default",
+          "Print MDT (Macro Definition Table)",
+          "  - Each line with line number",
+          "Print IC (Intermediate Code)",
+          "  - Non-macro code lines"
+        ],
+        code: `print "=== MNT ==="
+for each entry in MNT: print entry
+
+print "=== KPDTAB ==="
+for each entry in KPDTAB: print entry
+
+print "=== MDT ==="
+for (i=0; i<MDT.size; i++): 
+    print i+1 + ") " + MDT[i]
+
+print "=== IC ==="
+for each line in IC: print line`,
+        example: "All tables displayed on console"
+      },
+      {
+        title: "Step 13: Write Output Files",
+        description: "Save all tables to separate files",
+        details: [
+          "Write MNT.txt:",
+          "  - One MNT entry per line",
+          "Write KPDTAB.txt:",
+          "  - One keyword parameter per line",
+          "Write MDT.txt:",
+          "  - One macro body line per line",
+          "Write IC.txt:",
+          "  - One code line per line",
+          "Close all files"
+        ],
+        code: `Write to "MNT.txt":
+    Each MNT entry
+
+Write to "KPDTAB.txt":
+    Each KPDTAB entry
+
+Write to "MDT.txt":
+    Each MDT line
+
+Write to "IC.txt":
+    Each IC line
+
+Close all files`,
+        example: "4 files created: MNT.txt, KPDTAB.txt, MDT.txt, IC.txt"
+      },
+      {
+        title: "Step 14: End Program",
+        description: "Pass-I is complete!",
+        details: [
+          "All macros are defined in tables",
+          "MNT contains all macro metadata",
+          "MDT contains all macro definitions",
+          "KPDTAB contains default values",
+          "IC contains non-macro code",
+          "Ready for Pass-II (macro expansion)"
+        ],
+        code: `print "✓ Pass-I Complete!"
+print "Ready for Pass-II"
+exit(0)`,
+        example: "Macro Pass-I completed successfully!"
+      }
+    ]
+  }
+];
+
+const root = document.getElementById('phases-root');
+
+function createPhaseElement(phaseObj, pIndex) {
+  const phase = document.createElement('div'); phase.className='phase';
+  const header = document.createElement('div'); header.className='phase-header';
+  const icon = document.createElement('div'); icon.style.width='36px'; icon.style.height='36px';
+  icon.style.display='grid';icon.style.placeItems='center';icon.style.borderRadius='8px';
+  icon.style.background='rgba(255,255,255,0.06)'; icon.style.color='white'; icon.style.fontWeight='700';
+  icon.textContent='▶';
+  const h2 = document.createElement('h2'); h2.textContent = phaseObj.phase;
+  header.appendChild(icon); header.appendChild(h2);
+  phase.appendChild(header);
+
+  const body = document.createElement('div'); body.className='phase-body';
+
+  phaseObj.steps.forEach((stepObj, sIndex) => {
+    const stepWrap = document.createElement('div'); stepWrap.className='step';
+    const btn = document.createElement('button'); btn.className='step-button';
+    btn.type='button';
+
+    const iconDot = document.createElement('div'); iconDot.className='icon'; iconDot.textContent = String(sIndex+1);
+    const content = document.createElement('div'); content.className='step-content';
+    const t = document.createElement('h3'); t.className='step-title'; t.textContent = stepObj.title;
+    const d = document.createElement('p'); d.className='step-desc'; d.textContent = stepObj.description;
+
+    const chev = document.createElement('div'); chev.className='chev'; chev.innerHTML='›';
+
+    content.appendChild(t); content.appendChild(d);
+    btn.appendChild(iconDot); btn.appendChild(content); btn.appendChild(chev);
+    stepWrap.appendChild(btn);
+
+    const details = document.createElement('div'); details.className='details'; details.style.display='none';
+    const detBlock = document.createElement('div'); detBlock.className='block';
+    const detTitle = document.createElement('h4'); detTitle.textContent='📋 Detailed Steps:';
+    detBlock.appendChild(detTitle);
+    const ul = document.createElement('ul'); ul.className='list';
+    stepObj.details.forEach(it=>{
+      const li = document.createElement('li'); li.textContent = it;
+      ul.appendChild(li);
+    });
+    detBlock.appendChild(ul);
+    details.appendChild(detBlock);
+
+    const codeBlock = document.createElement('div'); codeBlock.className='block';
+    const codeTitle = document.createElement('h4'); codeTitle.textContent='💻 Pseudocode:';
+    const pre = document.createElement('pre'); pre.className='code';
+    pre.textContent = stepObj.code;
+    codeBlock.appendChild(codeTitle); codeBlock.appendChild(pre);
+    details.appendChild(codeBlock);
+
+    const exBlock = document.createElement('div'); exBlock.className='block';
+    const exTitle = document.createElement('h4'); exTitle.textContent='✨ Example:';
+    const ex = document.createElement('div'); ex.className='example'; ex.textContent = stepObj.example;
+    exBlock.appendChild(exTitle); exBlock.appendChild(ex);
+    details.appendChild(exBlock);
+
+    btn.addEventListener('click', ()=>{
+      const allButtons = document.querySelectorAll('.step-button');
+      allButtons.forEach(b=>b.classList.remove('current'));
+      const allChevs = document.querySelectorAll('.chev'); allChevs.forEach(c=>c.classList.remove('rotate'));
+      btn.classList.add('current');
+      chev.classList.add('rotate');
+      if (!btn.classList.contains('completed')) {
+        btn.classList.add('completed');
+        iconDot.classList.add('completed');
+      }
+      const visible = details.style.display === 'block';
+      document.querySelectorAll('.details').forEach(el=>el.style.display='none');
+      if (!visible) details.style.display = 'block';
+      else details.style.display = 'none';
+      setTimeout(()=>{ details.scrollIntoView({behavior:'smooth', block:'center'}); }, 120);
+    });
+
+    stepWrap.appendChild(details);
+
+    if (sIndex < phaseObj.steps.length - 1) {
+      const conn = document.createElement('div'); conn.className='connector';
+      const line = document.createElement('div'); line.className='line'; conn.appendChild(line);
+      stepWrap.appendChild(conn);
+    }
+
+    body.appendChild(stepWrap);
+  });
+
+  phase.appendChild(body);
+
+  if (pIndex < algorithm.length - 1) {
+    const outer = document.createElement('div'); outer.style.display='flex';outer.style.justifyContent='center';outer.style.margin='14px 0';
+    const col = document.createElement('div'); col.style.display='flex';col.style.flexDirection='column';col.style.alignItems='center';
+    const line = document.createElement('div'); line.style.width='2px';line.style.height='44px';line.style.background='#ddd6fe';line.style.borderRadius='2px';
+    const arrow = document.createElement('div'); arrow.style.transform='rotate(90deg)'; arrow.style.marginTop='8px'; arrow.style.color='#7c3aed';
+    arrow.innerHTML='&#8250;'; col.appendChild(line); col.appendChild(arrow); outer.appendChild(col);
+    phase.appendChild(outer);
+  }
+
+  return phase;
+}
+
+(function init() {
+  algorithm.forEach((ph, idx)=>{
+    const el = createPhaseElement(ph, idx);
+    root.appendChild(el);
+  });
+})();
+
+function downloadFile(filename) {
+  const files = {
+    'input.asm': `MACRO
+INCR &X,&Y=5
+MOVER AREG, &X
+ADD AREG, &Y
+MOVEM AREG, &X
+MEND
+
+START 200
+INCR A
+INCR B,10
+END`,
+    'input2.asm': `MACRO
+SWAP &P,&Q
+MOVER AREG, &P
+MOVER BREG, &Q
+MOVEM BREG, &P
+MOVEM AREG, &Q
+MEND
+
+MACRO
+CALC &A,&B=1,&C=2
+ADD &A, &B
+SUB &A, &C
+MEND
+
+START 100
+SWAP X,Y
+CALC M
+CALC N,5
+END`
+  };
+  
+  const content = files[filename] || 'File not found';
+  const blob = new Blob([content], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function downloadAllFiles() {
+  const files = ['input.asm', 'input2.asm'];
+  files.forEach((file, index) => {
+    setTimeout(() => downloadFile(file), index * 300);
+  });
+}
+
+const copyBtn = document.getElementById('copyBtn');
+const toggleBtn = document.getElementById('toggleBtn');
+const javaBlock = document.getElementById('javaBlock');
+const javaCode = document.getElementById('javaCode').innerText;
+
+copyBtn.addEventListener('click', async ()=>{
+  try {
+    await navigator.clipboard.writeText(javaCode);
+    copyBtn.textContent = 'Copied ✓';
+    setTimeout(()=> copyBtn.textContent = 'Copy code', 1600);
+  } catch (e) {
+    copyBtn.textContent = 'Copy failed';
+    setTimeout(()=> copyBtn.textContent = 'Copy code', 1600);
+  }
+});
+
+toggleBtn.addEventListener('click', ()=>{
+  if (javaBlock.style.display === 'none') {
+    javaBlock.style.display = 'block'; toggleBtn.textContent = 'Hide';
+  } else {
+    javaBlock.style.display = 'none'; toggleBtn.textContent = 'Show';
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Macro Pass Two Algorithm — Flowchart (HTML/CSS)</title>
+  <style>
+    :root{
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --accent1: #7c3aed;
+      --accent2: #0ea5a4;
+      --muted: #6b7280;
+      --glass: rgba(255,255,255,0.7);
+      --success: #16a34a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#faf5ff 0%, #f0f9ff 100%);
+      color:#0f172a;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:28px;
+    }
+
+    .container{max-width:1100px;margin:0 auto;}
+
+    .header{text-align:center;margin-bottom:18px}
+    .title{font-size:32px;font-weight:700;color:#0f172a;margin:0}
+    .subtitle{color:var(--accent1);margin-top:6px;font-weight:600}
+    .hint{color:var(--muted);font-size:13px;margin-top:8px}
+
+    .notice{
+      background:#fff7ed;border-left:6px solid #f59e0b;padding:12px;border-radius:8px;margin:20px 0;color:#92400e;
+    }
+
+    .download-section{
+      background:linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+      color:white;
+      padding:18px;
+      border-radius:12px;
+      margin:20px 0;
+      box-shadow:0 4px 12px rgba(124,58,237,0.2);
+    }
+    .download-header{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .download-icon{
+      width:40px;
+      height:40px;
+      background:rgba(255,255,255,0.2);
+      border-radius:10px;
+      display:grid;
+      place-items:center;
+      font-size:22px;
+    }
+    .download-title{
+      font-weight:700;
+      font-size:16px;
+    }
+    .download-desc{
+      font-size:13px;
+      opacity:0.9;
+      margin-top:2px;
+    }
+    .download-buttons{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .download-btn{
+      background:rgba(255,255,255,0.95);
+      color:#6b21a8;
+      border:none;
+      padding:8px 16px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+      transition:all 0.2s;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    }
+    .download-btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 4px 10px rgba(0,0,0,0.15);
+    }
+    .download-all-btn{
+      background:#16a34a;
+      color:white;
+    }
+    .download-all-btn:hover{
+      background:#15803d;
+    }
+
+    /* phase block */
+    .phase{
+      margin-bottom:22px;
+      border-radius:10px;
+      overflow:hidden;
+      box-shadow:0 8px 24px rgba(2,6,23,0.06);
+    }
+    .phase-header{
+      padding:14px 16px;
+      display:flex;align-items:center;gap:12px;
+      color:white;background:linear-gradient(90deg,#7c3aed,#a855f7);
+    }
+    .phase-header h2{margin:0;font-size:18px}
+    .phase-body{background:var(--card);padding:18px;border-top:1px solid #f3e8ff}
+
+    .step{
+      margin-bottom:14px;
+    }
+    .step-button{
+      width:100%;
+      display:flex;align-items:flex-start;gap:12px;
+      background: #faf5ff;border:1px solid #f3e8ff;padding:12px;border-radius:10px;
+      cursor:pointer;transition:all .18s ease;
+    }
+    .step-button:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(16,24,40,0.06)}
+    .step-button.current{border-color:#7c3aed;background:#f3e8ff;box-shadow:0 10px 30px rgba(124,58,237,0.08)}
+    .step-button.completed{border-color:#c7d2fe;background:#f0f9ff}
+
+    .icon{
+      margin-top:4px;
+      width:22px;height:22px;border-radius:999px;display:grid;place-items:center;background:#fff;border:1px solid #e9d5ff;color:#9ca3af;
+      font-weight:700;font-size:12px;
+    }
+    .icon.completed{background: #f0f9ff;color:var(--success);border-color: #bae6fd}
+    .step-content{flex:1}
+    .step-title{font-size:15px;font-weight:700;margin:0 0 4px 0;color:#0f172a}
+    .step-desc{margin:0;font-size:13px;color:var(--muted)}
+
+    .chev{
+      width:22px;height:22px;color:#9ca3af;transition:transform .18s ease;flex-shrink:0;
+    }
+    .chev.rotate{transform:rotate(90deg)}
+
+    .details{
+      margin-left:46px;margin-top:12px;padding:14px;border-radius:10px;background:#faf5ff;border:1px solid #f3e8ff;animation:fadeIn .12s ease;
+    }
+    .block{margin-bottom:12px}
+    .block h4{margin:0 0 8px 0;font-size:14px;color:#0f172a}
+    .list{padding-left:18px;margin:0;color:#0f172a}
+    .list li{margin-bottom:6px;font-size:13px;color:#44403c}
+    pre.code{
+      background:#1e1b4b;color:#c7d2fe;padding:12px;border-radius:8px;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    }
+    .example{background:#fef3c7;border:1px solid #fde68a;padding:10px;border-radius:8px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:#451a03}
+
+    .connector{display:flex;justify-content:center;margin:14px 0}
+    .connector .line{width:2px;height:44px;background:#ddd6fe;border-radius:2px}
+
+    .howto{background:linear-gradient(90deg,#7c3aed,#06b6d4);color:white;padding:16px;border-radius:10px;margin-top:18px}
+    .howto p{margin:6px 0;font-size:14px}
+
+    /* Java code panel */
+    .code-panel{
+      margin-top:18px;padding:12px;border-radius:8px;background:#1e1b4b;color:#f8fafc;border:1px solid rgba(255,255,255,0.04);
+    }
+    .code-header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .small-btn{background:rgba(255,255,255,0.06);border:none;color:white;padding:8px 10px;border-radius:8px;cursor:pointer}
+    .copy-msg{font-size:13px;color:#bbf7d0;margin-left:8px}
+
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none}}
+
+    /* responsive */
+    @media (max-width:720px){
+      body{padding:16px}
+      .phase-header h2{font-size:16px}
+      .title{font-size:24px}
+      .download-header{flex-direction:column;align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">Macro Pass Two Algorithm</h1>
+      <div class="subtitle">Macro Expansion Phase - Step-by-Step Flowchart</div>
+      <div class="hint">Click a step to open details. Use the Java panel below to view your PassTwo implementation.</div>
+    </div>
+
+    <div class="notice">
+      <div style="font-weight:600">📝 For Exam/Viva:</div>
+      <div style="font-size:13px;margin-top:6px;color:#7a4f1a">
+        Pass Two performs macro expansion using tables created by Pass One (MNT, KPDTAB, MDT). Follow the sequence carefully.
+      </div>
+    </div>
+
+    <!-- Download Section -->
+    <div class="download-section">
+      <div class="download-header">
+        <div class="download-icon">📥</div>
+        <div>
+          <div class="download-title">Download Input Files</div>
+          <div class="download-desc">Get sample MNT, KPDTAB, MDT, and IC files to test the Pass Two algorithm</div>
+        </div>
+      </div>
+      <div class="download-buttons">
+        <button onclick="downloadFile('MNT.txt')" class="download-btn">
+          📄 MNT.txt
+        </button>
+        <button onclick="downloadFile('KPDTAB.txt')" class="download-btn">
+          📄 KPDTAB.txt
+        </button>
+        <button onclick="downloadFile('MDT.txt')" class="download-btn">
+          📄 MDT.txt
+        </button>
+        <button onclick="downloadFile('IC.txt')" class="download-btn">
+          📄 IC.txt
+        </button>
+        <button onclick="downloadAllFiles()" class="download-btn download-all-btn">
+          ⬇️ Download All
+        </button>
+      </div>
+    </div>
+
+    <!-- PHASES -->
+    <div id="phases-root"></div>
+
+    <div class="howto">
+      <h3 style="margin:0 0 8px 0">🎓 How to Use This for Viva/Exam</h3>
+      <p><strong>1.</strong> Start with: "Pass Two reads Intermediate Code and expands macro calls using MNT, MDT, and KPDTAB."</p>
+      <p><strong>2.</strong> Click through steps and read the detailed blocks to understand APTAB construction and parameter substitution.</p>
+      <p><strong>3.</strong> Use the Java code below as the real implementation reference.</p>
+      <p><strong>4.</strong> Download the input files above to test the Java code yourself!</p>
+    </div>
+
+    <!-- Java Code Panel -->
+    <div class="code-panel" aria-live="polite">
+      <div class="code-header">
+        <div style="display:flex;align-items:center;gap:12px">
+          <strong>PassTwo.java</strong>
+          <span style="opacity:0.8;font-size:13px">(Your provided Java implementation)</span>
+        </div>
+        <div style="display:flex;align-items:center">
+          <button id="copyBtn" class="small-btn">Copy code</button>
+          <button id="toggleBtn" class="small-btn" style="margin-left:8px">Hide</button>
+        </div>
+      </div>
+
+      <div id="javaBlock" style="margin-top:10px;max-height:420px;overflow:auto;">
+        <pre id="javaCode" style="white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px">import java.io.*;
+import java.util.*;
+
+public class PassTwo {
+
+    // -----------------------------
+    // MNT ENTRY
+    // -----------------------------
+    static class MNTEntry {
+        String name;
+        int mdtIndex;                   // Index in MDT
+        int paramCount;                 // Total parameters (PP + KP)
+        Map<String, Integer> paramPositions; // Formal param → position (1-based)
+
+        MNTEntry(String name, int mdtIndex, int paramCount, Map<String,Integer> paramPositions) {
+            this.name = name;
+            this.mdtIndex = mdtIndex;
+            this.paramCount = paramCount;
+            this.paramPositions = paramPositions;
+        }
+    }
+
+    // -----------------------------
+    // MAIN
+    // -----------------------------
+    public static void main(String[] args) throws Exception {
+
+        // ---------- File paths ----------
+        String mntFile = "MNT.txt";
+        String kpdtFile = "KPDTAB.txt";
+        String mdtFile = "MDT.txt";
+        String icFile = "IC.txt";
+        String outputFile = "pass2_output.txt";
+
+        // ---------- Load tables ----------
+        Map<String, String> defaultValues = loadKPDTAB(kpdtFile);
+        Map<String, MNTEntry> MNT = loadMNT(mntFile);
+        List<String> MDT = loadMDT(mdtFile);
+
+        // ---------- Process IC ----------
+        List<String> expandedCode = processIC(icFile, MNT, MDT, defaultValues);
+
+        // ---------- Write output ----------
+        writeFile(outputFile, expandedCode);
+
+        System.out.println("✅ Pass-II complete. Expanded code written to " + outputFile);
+    }
+
+    // -----------------------------
+    // LOAD KPDTAB (default parameter values)
+    // -----------------------------
+    static Map<String, String> loadKPDTAB(String file) throws IOException {
+        Map<String, String> defaults = new HashMap<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (!line.isEmpty()) {
+                    String[] parts = line.split("=");
+                    String key = parts[0].trim();
+                    String val = parts[1].trim();
+                    defaults.put(key, val);
+                }
+            }
+        }
+        return defaults;
+    }
+
+    // -----------------------------
+    // LOAD MNT
+    // -----------------------------
+    static Map<String, MNTEntry> loadMNT(String file) throws IOException {
+        Map<String, MNTEntry> mnt = new HashMap<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty()) continue;
+
+                // MNT format: name pp kp mdtp kpdtp
+                String[] parts = line.split("\\\\s+");
+                String name = parts[0];
+                int pp = Integer.parseInt(parts[1]);
+                int kp = Integer.parseInt(parts[2]);
+                int mdtp = Integer.parseInt(parts[3]) - 1; // 0-based
+
+                // Build param positions (example: can be adapted per macro)
+                Map<String,Integer> paramPositions = new LinkedHashMap<>();
+                if (name.equals("M1")) {
+                    paramPositions.put("&X",1);
+                    paramPositions.put("&Y",2);
+                    paramPositions.put("&A",3);
+                    paramPositions.put("&B",4);
+                } else if (name.equals("M2")) {
+                    paramPositions.put("&P",1);
+                    paramPositions.put("&Q",2);
+                    paramPositions.put("&U",3);
+                    paramPositions.put("&V",4);
+                }
+
+                mnt.put(name, new MNTEntry(name, mdtp, pp+kp, paramPositions));
+            }
+        }
+        return mnt;
+    }
+
+    // -----------------------------
+    // LOAD MDT
+    // -----------------------------
+    static List<String> loadMDT(String file) throws IOException {
+        List<String> mdt = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                mdt.add(line.trim());
+            }
+        }
+        return mdt;
+    }
+
+    // -----------------------------
+    // PROCESS IC (Intermediate Code)
+    // -----------------------------
+    static List<String> processIC(String file, Map<String, MNTEntry> MNT,
+                                  List<String> MDT, Map<String,String> defaults) throws IOException {
+
+        List<String> expanded = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty()) continue;
+
+                String[] parts = line.split("\\\\s+");
+                String mnemonic = parts[0];
+
+                if (MNT.containsKey(mnemonic)) {
+                    // ------------------ Macro call ------------------
+                    MNTEntry entry = MNT.get(mnemonic);
+
+                    // Build APTAB (1-based index)
+                    String[] APTAB = new String[entry.paramCount+1];
+                    Arrays.fill(APTAB,"");
+
+                    // Positional arguments
+                    int posIndex = 1;
+                    for (int i=1;i<parts.length;i++) {
+                        if (!parts[i].contains("=") && posIndex<=entry.paramCount) {
+                            APTAB[posIndex++] = parts[i];
+                        }
+                    }
+
+                    // Keyword arguments
+                    for (int i=1;i<parts.length;i++) {
+                        if (parts[i].contains("=")) {
+                            String[] kv = parts[i].split("=");
+                            String key = kv[0].trim();
+                            String val = kv[1].trim();
+                            Integer idx = entry.paramPositions.get(key);
+                            if (idx != null) APTAB[idx] = val;
+                        }
+                    }
+
+                    // Fill missing parameters with defaults
+                    for (Map.Entry<String,Integer> e : entry.paramPositions.entrySet()) {
+                        int idx = e.getValue();
+                        if (APTAB[idx] == null || APTAB[idx].isEmpty()) {
+                            String defVal = defaults.get(e.getKey());
+                            if (defVal != null) APTAB[idx] = defVal;
+                        }
+                    }
+
+                    // Expand MDT
+                    for (int i=entry.mdtIndex;i<MDT.size();i++) {
+                        String mdtLine = MDT.get(i);
+                        if (mdtLine.equalsIgnoreCase("MEND")) break;
+
+                        for (int p=1;p<=entry.paramCount;p++) {
+                            mdtLine = mdtLine.replace("(P,"+p+")", APTAB[p]);
+                        }
+                        expanded.add(mdtLine);
+                    }
+
+                } else {
+                    // Normal instruction → keep as-is
+                    expanded.add(line);
+                }
+            }
+        }
+
+        return expanded;
+    }
+
+    // -----------------------------
+    // WRITE FILE
+    // -----------------------------
+    static void writeFile(String file, List<String> data) throws IOException {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
+            for (String l : data) pw.println(l);
+        }
+    }
+}</pre>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+/* ---------- Data structure for Pass Two Algorithm ---------- */
+const algorithm = [
+  {
+    phase: "INITIALIZATION PHASE",
+    steps: [
+      {
+        title: "Step 1: Load KPDTAB (Keyword Parameter Default Table)",
+        description: "Read all default values for keyword parameters from KPDTAB file",
+        details: [
+          "Open KPDTAB.txt file for reading",
+          "Read each line containing 'parameter=defaultValue' format",
+          "Parse and split by '=' to get parameter name and value",
+          "Store in a HashMap: defaultValues[paramName] = value",
+          "Example: '&A=AREG' means parameter &A defaults to AREG"
+        ],
+        code: `Map<String, String> defaultValues = new HashMap<>();
+while ((line = readLine(KPDTAB)) != null) {
+    parts = line.split("=");
+    paramName = parts[0].trim();
+    value = parts[1].trim();
+    defaultValues[paramName] = value;
+}`,
+        example: "KPDTAB:\n&A=AREG\n&B=BREG\n\nLoaded: {'&A':'AREG', '&B':'BREG'}"
+      },
+      {
+        title: "Step 2: Load MNT (Macro Name Table)",
+        description: "Read macro definitions and create MNT entries with parameter information",
+        details: [
+          "Open MNT.txt file for reading",
+          "For each macro entry, parse: name PP KP MDTP KPDTP",
+          "PP = Number of Positional Parameters",
+          "KP = Number of Keyword Parameters",
+          "MDTP = MDT Pointer (starting index in MDT)",
+          "Create MNTEntry object with parameter positions map",
+          "Store in HashMap: MNT[macroName] = MNTEntry"
+        ],
+        code: `Map<String, MNTEntry> MNT = new HashMap<>();
+while ((line = readLine(MNT_FILE)) != null) {
+    parts = line.split("\\\\s+");
+    name = parts[0];
+    pp = parseInt(parts[1]);
+    kp = parseInt(parts[2]);
+    mdtp = parseInt(parts[3]) - 1; // 0-based
+    
+    // Build parameter position map
+    paramPositions = buildParamMap(name);
+    
+    MNT[name] = new MNTEntry(name, mdtp, pp+kp, paramPositions);
+}`,
+        example: "MNT.txt:\nM1 2 2 1 1\n\nParsed: M1 has 2 PP, 2 KP, starts at MDT[0]"
+      },
+      {
+        title: "Step 3: Load MDT (Macro Definition Table)",
+        description: "Read all macro body definitions into memory",
+        details: [
+          "Open MDT.txt file for reading",
+          "Read each line as-is (macro body with parameter references)",
+          "Store in ArrayList: MDT[index] = line",
+          "Lines contain instructions with (P,n) notation",
+          "(P,n) means nth parameter will be substituted during expansion",
+          "MEND marks end of each macro definition"
+        ],
+        code: `List<String> MDT = new ArrayList<>();
+while ((line = readLine(MDT_FILE)) != null) {
+    MDT.add(line.trim());
+}`,
+        example: "MDT:\n0: MOVER (P,1) (P,3)\n1: ADD (P,1) (P,4)\n2: MEND"
+      },
+      {
+        title: "Step 4: Open Intermediate Code File",
+        description: "Prepare to read the intermediate code (IC) line by line",
+        details: [
+          "Open IC.txt file (output from Pass One)",
+          "IC contains mix of normal instructions and macro calls",
+          "Macro calls will be expanded using tables loaded above",
+          "Normal instructions will be copied as-is to output",
+          "Initialize empty expandedCode list to store final output"
+        ],
+        code: `BufferedReader icReader = new BufferedReader(
+    new FileReader("IC.txt")
+);
+List<String> expandedCode = new ArrayList<>();`,
+        example: "IC.txt ready to process:\nSTART 100\nM1 10 20 &B=CREG\nEND"
+      }
+    ]
+  },
+  {
+    phase: "MAIN PROCESSING LOOP",
+    steps: [
+      {
+        title: "Step 5: Read Next Line from IC",
+        description: "Get one line from intermediate code file",
+        details: [
+          "Read one line from IC file",
+          "Trim leading/trailing whitespace",
+          "Skip empty lines",
+          "Continue until end of file",
+          "Each line is either a macro call or normal instruction"
+        ],
+        code: `while ((line = readLine(IC)) != null) {
+    line = line.trim();
+    if (line.isEmpty()) continue;
+    
+    // Process this line...
+}`,
+        example: "Line read: 'M1 10 20 &B=CREG'"
+      },
+      {
+        title: "Step 6: Parse Line and Extract Mnemonic",
+        description: "Break line into tokens and identify the instruction/macro name",
+        details: [
+          "Split line by whitespace to get tokens",
+          "First token is always the mnemonic (instruction or macro name)",
+          "Remaining tokens are arguments/parameters",
+          "Store tokens for further processing"
+        ],
+        code: `String[] parts = line.split("\\\\s+");
+String mnemonic = parts[0];
+// parts[1], parts[2], ... are arguments`,
+        example: "Input: 'M1 10 20 &B=CREG'\nparts = ['M1', '10', '20', '&B=CREG']\nmnemonic = 'M1'"
+      },
+      {
+        title: "Step 7: Check if Mnemonic is a Macro Call",
+        description: "Determine if this is a macro call or normal instruction",
+        details: [
+          "Look up mnemonic in MNT",
+          "If found in MNT → It's a MACRO CALL → Go to Step 8",
+          "If NOT found → It's a NORMAL INSTRUCTION → Go to Step 17",
+          "This is the key decision point in Pass Two"
+        ],
+        code: `if (MNT.containsKey(mnemonic)) {
+    // MACRO CALL - expand it
+    expandMacro(mnemonic, parts);
+} else {
+    // NORMAL INSTRUCTION - copy as-is
+    expandedCode.add(line);
+}`,
+        example: "M1 found in MNT → Macro call detected!"
+      }
+    ]
+  },
+  {
+    phase: "MACRO EXPANSION PROCESSING",
+    steps: [
+      {
+        title: "Step 8: Retrieve Macro Information",
+        description: "Get macro details from MNT entry",
+        details: [
+          "Fetch MNTEntry for this macro from MNT",
+          "Extract: macro name, MDT index, parameter count",
+          "Extract: parameter positions map (formal params → indices)",
+          "This information guides the expansion process"
+        ],
+        code: `MNTEntry entry = MNT.get(mnemonic);
+String name = entry.name;
+int mdtIndex = entry.mdtIndex;
+int paramCount = entry.paramCount;
+Map<String,Integer> paramPositions = entry.paramPositions;`,
+        example: "M1 entry: mdtIndex=0, paramCount=4\nParams: {&X:1, &Y:2, &A:3, &B:4}"
+      },
+      {
+        title: "Step 9: Initialize APTAB (Actual Parameter Table)",
+        description: "Create empty table to store actual parameter values",
+        details: [
+          "Create array APTAB of size (paramCount + 1)",
+          "Use 1-based indexing (index 0 unused)",
+          "Initialize all positions with empty strings",
+          "APTAB will map parameter position → actual value",
+          "Example: APTAB[1] = first actual parameter"
+        ],
+        code: `String[] APTAB = new String[entry.paramCount + 1];
+Arrays.fill(APTAB, "");
+// APTAB[1] through APTAB[paramCount] will be filled`,
+        example: "For M1 with 4 params:\nAPTAB = ['', '', '', '', '']  (size 5)"
+      },
+      {
+        title: "Step 10: Process Positional Arguments",
+        description: "Fill APTAB with positional parameters from macro call",
+        details: [
+          "Scan through macro call arguments (parts[1], parts[2], ...)",
+          "Skip arguments containing '=' (those are keyword args)",
+          "For each positional argument:",
+          "  - Place it in APTAB at next position (1, 2, 3, ...)",
+          "  - Increment position counter",
+          "Positional args must appear before keyword args"
+        ],
+        code: `int posIndex = 1;
+for (int i = 1; i < parts.length; i++) {
+    if (!parts[i].contains("=")) {
+        APTAB[posIndex++] = parts[i];
+    }
+}`,
+        example: "Call: M1 10 20 &B=CREG\nPositional: 10, 20\nAPTAB[1]='10', APTAB[2]='20'"
+      },
+      {
+        title: "Step 11: Process Keyword Arguments",
+        description: "Fill APTAB with keyword parameters from macro call",
+        details: [
+          "Scan through macro call arguments again",
+          "Look for arguments containing '=' (keyword format)",
+          "For each keyword argument:",
+          "  - Split by '=' to get: paramName = value",
+          "  - Look up paramName in paramPositions map",
+          "  - Place value in APTAB at correct position",
+          "Keyword args override positional placement"
+        ],
+        code: `for (int i = 1; i < parts.length; i++) {
+    if (parts[i].contains("=")) {
+        String[] kv = parts[i].split("=");
+        String key = kv[0].trim();    // e.g., &B
+        String val = kv[1].trim();    // e.g., CREG
+        Integer idx = paramPositions.get(key);
+        if (idx != null) APTAB[idx] = val;
+    }
+}`,
+        example: "Keyword: &B=CREG\nparamPositions[&B]=4\nAPTAB[4]='CREG'"
+      },
+      {
+        title: "Step 12: Fill Missing Parameters with Defaults",
+        description: "Use KPDTAB to fill any unspecified keyword parameters",
+        details: [
+          "Iterate through all parameter positions",
+          "For each position in APTAB that is still empty:",
+          "  - Get formal parameter name from paramPositions",
+          "  - Look up default value in defaultValues (from KPDTAB)",
+          "  - If default exists, place it in APTAB",
+          "This ensures all parameters have values for expansion"
+        ],
+        code: `for (Map.Entry<String,Integer> e : paramPositions.entrySet()) {
+    String paramName = e.getKey();  // e.g., &A
+    int idx = e.getValue();          // e.g., 3
+    
+    if (APTAB[idx] == null || APTAB[idx].isEmpty()) {
+        String defVal = defaultValues.get(paramName);
+        if (defVal != null) {
+            APTAB[idx] = defVal;
+        }
+    }
+}`,
+        example: "APTAB[3] empty, &A defaults to AREG\nAPTAB[3]='AREG'\nFinal: ['','10','20','AREG','CREG']"
+      },
+      {
+        title: "Step 13: Locate Macro Definition in MDT",
+        description: "Find starting point of macro body in MDT",
+        details: [
+          "Get mdtIndex from MNT entry",
+          "This points to first line of macro definition in MDT",
+          "Prepare to read macro body line by line",
+          "Stop when MEND is encountered"
+        ],
+        code: `int mdtStart = entry.mdtIndex;
+// Start reading from MDT[mdtStart]`,
+        example: "M1 starts at MDT[0]\nReady to expand from index 0"
+      },
+      {
+        title: "Step 14: Read MDT Line",
+        description: "Get next line from macro definition",
+        details: [
+          "Read line from MDT at current index",
+          "Line contains instruction with parameter references",
+          "Parameter references are in format (P,n)",
+          "Example: 'MOVER (P,1) (P,3)'",
+          "Continue until MEND is found"
+        ],
+        code: `for (int i = mdtStart; i < MDT.size(); i++) {
+    String mdtLine = MDT.get(i);
+    
+    if (mdtLine.equalsIgnoreCase("MEND")) {
+        break;  // End of macro definition
+    }
+    
+    // Process this line...
+}`,
+        example: "MDT[0]: 'MOVER (P,1) (P,3)'"
+      },
+      {
+        title: "Step 15: Substitute Parameters",
+        description: "Replace (P,n) with actual values from APTAB",
+        details: [
+          "Scan the MDT line for all (P,n) patterns",
+          "For each (P,n) found:",
+          "  - Extract n (parameter position number)",
+          "  - Get actual value from APTAB[n]",
+          "  - Replace (P,n) with the actual value",
+          "Repeat for all parameters (P,1) through (P,paramCount)",
+          "This produces the expanded instruction"
+        ],
+        code: `for (int p = 1; p <= entry.paramCount; p++) {
+    String pattern = "(P," + p + ")";
+    String actualValue = APTAB[p];
+    mdtLine = mdtLine.replace(pattern, actualValue);
+}`,
+        example: "Before: 'MOVER (P,1) (P,3)'\nAPTAB[1]='10', APTAB[3]='AREG'\nAfter: 'MOVER 10 AREG'"
+      },
+      {
+        title: "Step 16: Add Expanded Line to Output",
+        description: "Store the expanded instruction in output list",
+        details: [
+          "Add the fully substituted line to expandedCode list",
+          "This line is now a normal assembly instruction",
+          "No more (P,n) references remain",
+          "Continue expanding next line from MDT",
+          "Return to Step 14 until MEND is reached"
+        ],
+        code: `expandedCode.add(mdtLine);
+// Continue to next MDT line`,
+        example: "Expanded: 'MOVER 10 AREG'\nAdded to output list"
+      }
+    ]
+  },
+  {
+    phase: "NORMAL INSTRUCTION PROCESSING",
+    steps: [
+      {
+        title: "Step 17: Handle Normal Instruction",
+        description: "Process non-macro instructions (when mnemonic not in MNT)",
+        details: [
+          "This line is NOT a macro call",
+          "It's a regular assembly instruction (START, MOVER, ADD, etc.)",
+          "Copy the entire line as-is to output",
+          "No expansion or substitution needed",
+          "Add to expandedCode list"
+        ],
+        code: `// Mnemonic not found in MNT
+expandedCode.add(line);  // Copy as-is`,
+        example: "Input: 'START 100'\nNot a macro → Output: 'START 100'"
+      },
+      {
+        title: "Step 18: Continue to Next Line",
+        description: "Move to next line in Intermediate Code",
+        details: [
+          "After processing (expansion or copy)",
+          "Return to Step 5 to read next IC line",
+          "Continue until end of IC file",
+          "All macro calls will be expanded",
+          "All normal instructions will be copied"
+        ],
+        code: `// Return to Step 5
+continue;  // Read next line from IC`,
+        example: "Processing next line in IC..."
+      }
+    ]
+  },
+  {
+    phase: "COMPLETION PHASE",
+    steps: [
+      {
+        title: "Step 19: Close Input File",
+        description: "Finish reading IC file",
+        details: [
+          "All lines from IC have been processed",
+          "Close the BufferedReader for IC.txt",
+          "expandedCode list now contains fully expanded program",
+          "Ready to write output"
+        ],
+        code: `icReader.close();
+// All macro calls are now expanded`,
+        example: "IC file closed. Expansion complete!"
+      },
+      {
+        title: "Step 20: Write Expanded Code to Output File",
+        description: "Save the expanded assembly code to pass2_output.txt",
+        details: [
+          "Open pass2_output.txt for writing",
+          "Write each line from expandedCode list",
+          "Each line is now a normal assembly instruction",
+          "No macro calls remain in output",
+          "This file can be used by assembler Pass One"
+        ],
+        code: `PrintWriter writer = new PrintWriter(
+    new FileWriter("pass2_output.txt")
+);
+for (String line : expandedCode) {
+    writer.println(line);
+}
+writer.close();`,
+        example: "Output written to pass2_output.txt:\nSTART 100\nMOVER 10 AREG\nADD 10 CREG\nEND"
+      },
+      {
+        title: "Step 21: Display Success Message",
+        description: "Inform user that Pass Two is complete",
+        details: [
+          "Print completion message to console",
+          "Indicate output file name",
+          "Pass Two successfully completed macro expansion",
+          "Output file ready for further processing"
+        ],
+        code: `System.out.println(
+    "✅ Pass-II complete. " +
+    "Expanded code written to pass2_output.txt"
+);`,
+        example: "Console: ✅ Pass-II complete. Expanded code written to pass2_output.txt"
+      },
+      {
+        title: "Step 22: End Program",
+        description: "Pass Two macro expansion is finished!",
+        details: [
+          "All macro calls have been expanded",
+          "Output file contains pure assembly code",
+          "APTAB was used to substitute parameters correctly",
+          "Default values from KPDTAB were applied where needed",
+          "Program can now proceed to assembler Pass One"
+        ],
+        code: `exit(0);  // Program ends successfully`,
+        example: "Pass Two Complete! Ready for assembler."
+      }
+    ]
+  }
+];
+
+/* ---------- Render UI ---------- */
+const root = document.getElementById('phases-root');
+
+function createPhaseElement(phaseObj, pIndex) {
+  const phase = document.createElement('div'); phase.className='phase';
+  const header = document.createElement('div'); header.className='phase-header';
+  const icon = document.createElement('div'); icon.style.width='36px'; icon.style.height='36px';
+  icon.style.display='grid';icon.style.placeItems='center';icon.style.borderRadius='8px';
+  icon.style.background='rgba(255,255,255,0.06)'; icon.style.color='white'; icon.style.fontWeight='700';
+  icon.textContent='▶';
+  const h2 = document.createElement('h2'); h2.textContent = phaseObj.phase;
+  header.appendChild(icon); header.appendChild(h2);
+  phase.appendChild(header);
+
+  const body = document.createElement('div'); body.className='phase-body';
+
+  phaseObj.steps.forEach((stepObj, sIndex) => {
+    const stepWrap = document.createElement('div'); stepWrap.className='step';
+    const btn = document.createElement('button'); btn.className='step-button';
+    btn.type='button';
+
+    const iconDot = document.createElement('div'); iconDot.className='icon'; iconDot.textContent = String(sIndex+1);
+    const content = document.createElement('div'); content.className='step-content';
+    const t = document.createElement('h3'); t.className='step-title'; t.textContent = stepObj.title;
+    const d = document.createElement('p'); d.className='step-desc'; d.textContent = stepObj.description;
+
+    const chev = document.createElement('div'); chev.className='chev'; chev.innerHTML='›';
+
+    content.appendChild(t); content.appendChild(d);
+    btn.appendChild(iconDot); btn.appendChild(content); btn.appendChild(chev);
+    stepWrap.appendChild(btn);
+
+    // details area (hidden by default)
+    const details = document.createElement('div'); details.className='details'; details.style.display='none';
+    // detailed steps
+    const detBlock = document.createElement('div'); detBlock.className='block';
+    const detTitle = document.createElement('h4'); detTitle.textContent='📋 Detailed Steps:';
+    detBlock.appendChild(detTitle);
+    const ul = document.createElement('ul'); ul.className='list';
+    stepObj.details.forEach(it=>{
+      const li = document.createElement('li'); li.textContent = it;
+      ul.appendChild(li);
+    });
+    detBlock.appendChild(ul);
+    details.appendChild(detBlock);
+
+    // pseudocode block
+    const codeBlock = document.createElement('div'); codeBlock.className='block';
+    const codeTitle = document.createElement('h4'); codeTitle.textContent='💻 Pseudocode:';
+    const pre = document.createElement('pre'); pre.className='code';
+    pre.textContent = stepObj.code;
+    codeBlock.appendChild(codeTitle); codeBlock.appendChild(pre);
+    details.appendChild(codeBlock);
+
+    // example block
+    const exBlock = document.createElement('div'); exBlock.className='block';
+    const exTitle = document.createElement('h4'); exTitle.textContent='✨ Example:';
+    const ex = document.createElement('div'); ex.className='example'; ex.textContent = stepObj.example;
+    exBlock.appendChild(exTitle); exBlock.appendChild(ex);
+    details.appendChild(exBlock);
+
+    // Add small connector except last step
+    btn.addEventListener('click', ()=>{
+      const allButtons = document.querySelectorAll('.step-button');
+      allButtons.forEach(b=>b.classList.remove('current'));
+      const allChevs = document.querySelectorAll('.chev'); allChevs.forEach(c=>c.classList.remove('rotate'));
+      btn.classList.add('current');
+      chev.classList.add('rotate');
+      // mark completed when clicked (toggle)
+      if (!btn.classList.contains('completed')) {
+        btn.classList.add('completed');
+        iconDot.classList.add('completed');
+      }
+      // toggle details display
+      const visible = details.style.display === 'block';
+      // hide all details
+      document.querySelectorAll('.details').forEach(el=>el.style.display='none');
+      if (!visible) details.style.display = 'block';
+      else details.style.display = 'none';
+      // scroll small amount into view for mobile
+      setTimeout(()=>{ details.scrollIntoView({behavior:'smooth', block:'center'}); }, 120);
+    });
+
+    stepWrap.appendChild(details);
+
+    // connector line if not last in phase
+    if (sIndex < phaseObj.steps.length - 1) {
+      const conn = document.createElement('div'); conn.className='connector';
+      const line = document.createElement('div'); line.className='line'; conn.appendChild(line);
+      stepWrap.appendChild(conn);
+    }
+
+    body.appendChild(stepWrap);
+  });
+
+  phase.appendChild(body);
+
+  // connector between phases
+  if (pIndex < algorithm.length - 1) {
+    const outer = document.createElement('div'); outer.style.display='flex';outer.style.justifyContent='center';outer.style.margin='14px 0';
+    const col = document.createElement('div'); col.style.display='flex';col.style.flexDirection='column';col.style.alignItems='center';
+    const line = document.createElement('div'); line.style.width='2px';line.style.height='44px';line.style.background='#ddd6fe';line.style.borderRadius='2px';
+    const arrow = document.createElement('div'); arrow.style.transform='rotate(90deg)'; arrow.style.marginTop='8px'; arrow.style.color='#7c3aed';
+    arrow.innerHTML='&#8250;'; col.appendChild(line); col.appendChild(arrow); outer.appendChild(col);
+    phase.appendChild(outer);
+  }
+
+  return phase;
+}
+
+(function init() {
+  algorithm.forEach((ph, idx)=>{
+    const el = createPhaseElement(ph, idx);
+    root.appendChild(el);
+  });
+})();
+
+function downloadFile(filename) {
+  // Create sample content for each file
+  let content = '';
+  
+  if (filename === 'MNT.txt') {
+    content = `M1 2 2 1 1
+M2 2 2 5 3`;
+  } else if (filename === 'KPDTAB.txt') {
+    content = `&A=AREG
+&B=BREG
+&U=CREG
+&V=DREG`;
+  } else if (filename === 'MDT.txt') {
+    content = `MOVER (P,1) (P,3)
+ADD (P,1) (P,4)
+MEND
+SUB (P,1) (P,3)
+MULT (P,1) (P,4)
+MEND`;
+  } else if (filename === 'IC.txt') {
+    content = `START 100
+M1 10 20 &B=CREG
+M2 30 40
+END`;
+  }
+  
+  const blob = new Blob([content], { type: 'text/plain' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
+}
+
+function downloadAllFiles() {
+  const files = ['MNT.txt', 'KPDTAB.txt', 'MDT.txt', 'IC.txt'];
+  files.forEach((file, index) => {
+    setTimeout(() => downloadFile(file), index * 300);
+  });
+}
+
+/* ---------- Copy & Toggle Java code ---------- */
+const copyBtn = document.getElementById('copyBtn');
+const toggleBtn = document.getElementById('toggleBtn');
+const javaBlock = document.getElementById('javaBlock');
+const javaCode = document.getElementById('javaCode').innerText;
+
+copyBtn.addEventListener('click', async ()=>{
+  try {
+    await navigator.clipboard.writeText(javaCode);
+    copyBtn.textContent = 'Copied ✓';
+    setTimeout(()=> copyBtn.textContent = 'Copy code', 1600);
+  } catch (e) {
+    copyBtn.textContent = 'Copy failed';
+    setTimeout(()=> copyBtn.textContent = 'Copy code', 1600);
+  }
+});
+
+toggleBtn.addEventListener('click', ()=>{
+  if (javaBlock.style.display === 'none') {
+    javaBlock.style.display = 'block'; toggleBtn.textContent = 'Hide';
+  } else {
+    javaBlock.style.display = 'none'; toggleBtn.textContent = 'Show';
+  }
+});
+</script>
+</body>
+</html>
