@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pass Two Algorithm — Flowchart (HTML/CSS)</title>
+  <style>
+    :root{
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --accent1: #c026d3; /* fuchsia */
+      --accent2: #0891b2; /* cyan */
+      --muted: #6b7280;
+      --glass: rgba(255,255,255,0.7);
+      --success: #16a34a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#fae8ff 0%, #e0f2fe 100%);
+      color:#0f172a;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:28px;
+    }
+
+    .container{max-width:1100px;margin:0 auto;}
+
+    .header{text-align:center;margin-bottom:18px}
+    .title{font-size:32px;font-weight:700;color:#0f172a;margin:0}
+    .subtitle{color:var(--accent1);margin-top:6px;font-weight:600}
+    .hint{color:var(--muted);font-size:13px;margin-top:8px}
+
+    .notice{
+      background:#fff7ed;border-left:6px solid #f59e0b;padding:12px;border-radius:8px;margin:20px 0;color:#92400e;
+    }
+
+    /* phase block */
+    .phase{
+      margin-bottom:22px;
+      border-radius:10px;
+      overflow:hidden;
+      box-shadow:0 8px 24px rgba(2,6,23,0.06);
+    }
+    .phase-header{
+      padding:14px 16px;
+      display:flex;align-items:center;gap:12px;
+      color:white;background:linear-gradient(90deg,#c026d3,#7c3aed);
+    }
+    .phase-header h2{margin:0;font-size:18px}
+    .phase-body{background:var(--card);padding:18px;border-top:1px solid #fae8ff}
+
+    .step{
+      margin-bottom:14px;
+    }
+    .step-button{
+      width:100%;
+      display:flex;align-items:flex-start;gap:12px;
+      background: #f8fafc;border:1px solid #e6edf6;padding:12px;border-radius:10px;
+      cursor:pointer;transition:all .18s ease;
+    }
+    .step-button:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(16,24,40,0.06)}
+    .step-button.current{border-color:#c026d3;background:#fae8ff;box-shadow:0 10px 30px rgba(192,38,211,0.08)}
+    .step-button.completed{border-color:#bbf7d0;background:#f0fdf4}
+
+    .icon{
+      margin-top:4px;
+      width:22px;height:22px;border-radius:999px;display:grid;place-items:center;background:#fff;border:1px solid #e6edf6;color:#9ca3af;
+      font-weight:700;font-size:12px;
+    }
+    .icon.completed{background: #ecfdf5;color:var(--success);border-color: #bbf7d0}
+    .step-content{flex:1}
+    .step-title{font-size:15px;font-weight:700;margin:0 0 4px 0;color:#0f172a}
+    .step-desc{margin:0;font-size:13px;color:var(--muted)}
+
+    .chev{
+      width:22px;height:22px;color:#9ca3af;transition:transform .18s ease;flex-shrink:0;
+    }
+    .chev.rotate{transform:rotate(90deg)}
+
+    .details{
+      margin-left:46px;margin-top:12px;padding:14px;border-radius:10px;background:#f8fbff;border:1px solid #e6f0ff;animation:fadeIn .12s ease;
+    }
+    .block{margin-bottom:12px}
+    .block h4{margin:0 0 8px 0;font-size:14px;color:#0f172a}
+    .list{padding-left:18px;margin:0;color:#0f172a}
+    .list li{margin-bottom:6px;font-size:13px;color:#083344}
+    pre.code{
+      background:#0f172a;color:#b7f5d0;padding:12px;border-radius:8px;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    }
+    .example{background:#faf5ff;border:1px solid #f3e8ff;padding:10px;border-radius:8px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:#221e3b}
+
+    .connector{display:flex;justify-content:center;margin:14px 0}
+    .connector .line{width:2px;height:44px;background:#ddd6fe;border-radius:2px}
+
+    .howto{background:linear-gradient(90deg,#c026d3,#06b6d4);color:white;padding:16px;border-radius:10px;margin-top:18px}
+    .howto p{margin:6px 0;font-size:14px}
+
+    /* Java code panel */
+    .code-panel{
+      margin-top:18px;padding:12px;border-radius:8px;background:#111827;color:#f8fafc;border:1px solid rgba(255,255,255,0.04);
+    }
+    .code-header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .small-btn{background:rgba(255,255,255,0.06);border:none;color:white;padding:8px 10px;border-radius:8px;cursor:pointer}
+    .copy-msg{font-size:13px;color:#bbf7d0;margin-left:8px}
+
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none}}
+
+    /* responsive */
+    @media (max-width:720px){
+      .phase-header h2{font-size:16px}
+      .title{font-size:22px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">Pass Two Algorithm</h1>
+      <div class="subtitle">Step-by-Step Flowchart</div>
+      <div class="hint">Click a step to open details. Use the Java panel below to view your PassTwo implementation.</div>
+    </div>
+
+    <div class="notice">
+      <div style="font-weight:600">🎯 Pass Two Goal:</div>
+      <div style="font-size:13px;margin-top:6px;color:#7a4f1a">
+        Convert Intermediate Code to actual Machine Code using Symbol Table and Literal Table from Pass One.
+      </div>
+    </div>
+
+    <!-- PHASES -->
+    <div id="phases-root"></div>
+
+    <div class="howto">
+      <h3 style="margin:0 0 8px 0">🎓 How to Use This for Viva/Exam</h3>
+      <p><strong>1.</strong> Start with: "Pass Two reads intermediate code and generates machine code using tables from Pass One."</p>
+      <p><strong>2.</strong> Click through steps to understand: Loading tables → Processing IC → Generating machine code.</p>
+      <p><strong>3.</strong> Reference the Java code below for implementation details.</p>
+    </div>
+
+    <!-- Java Code Panel -->
+    <div class="code-panel" aria-live="polite">
+      <div class="code-header">
+        <div style="display:flex;align-items:center;gap:12px">
+          <strong>PassTwoSimplified.java</strong>
+          <span style="opacity:0.8;font-size:13px">(Your provided Java implementation)</span>
+        </div>
+        <div style="display:flex;align-items:center">
+          <button id="copyBtn" class="small-btn">Copy code</button>
+          <button id="toggleBtn" class="small-btn" style="margin-left:8px">Hide</button>
+        </div>
+      </div>
+
+      <div id="javaBlock" style="margin-top:10px;max-height:420px;overflow:auto;">
+        <pre id="javaCode" style="white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px">
+import java.io.*;
+import java.util.*;
+
+public class PassTwoSimplified {
+
+    // Symbol Table and Literal Table
+    static Map<Integer, Integer> SYMTAB = new HashMap<>();
+    static Map<Integer, Integer> LITTAB = new HashMap<>();
+
+    // Intermediate Code lines
+    static List<String> IC = new ArrayList<>();
+
+    public static void main(String[] args) {
+        // Step 1: Load all required tables
+        loadFile("symtab.txt", SYMTAB, true);
+        loadFile("littab.txt", LITTAB, false);
+        loadIntermediate("intermediate.txt");
+
+        System.out.println("\\n--- SYMBOL TABLE ---");
+        System.out.println(SYMTAB);
+        System.out.println("--- LITERAL TABLE ---");
+        System.out.println(LITTAB);
+        System.out.println("--- INTERMEDIATE CODE ---");
+        IC.forEach(System.out::println);
+
+        System.out.println("\\n--- MACHINE CODE ---");
+        generateMachineCode();
+    }
+
+    // =======================
+    // MACHINE CODE GENERATION
+    // =======================
+    static void generateMachineCode() {
+        int LC = 0;
+
+        for (String line : IC) {
+
+            // Handle Assembler Directives (AD)
+            if (line.startsWith("(AD")) {
+                if (line.contains("01")) LC = getConstant(line);           // START
+                else if (line.contains("03")) LC = getConstant(line);      // ORIGIN
+                else if (line.contains("02")) System.out.println("\\nProgram Ended.");
+                continue;
+            }
+
+            // Handle Declarative Statements (DL)
+            if (line.startsWith("(DL")) {
+                System.out.print(address(LC) + ":\\t");
+                if (line.contains("01")) {   // DC
+                    int val = getConstant(line);
+                    System.out.println("00 00 " + address(val));
+                } else if (line.contains("02")) { // DS
+                    System.out.println("00 00 000");
+                }
+                LC++;
+                continue;
+            }
+
+            // Handle Instruction Statements (IS)
+            if (line.startsWith("(IS")) {
+                System.out.print(address(LC) + ":\\t");
+
+                String opcode = getOpcode(line);
+                String reg = "0", mem = "000";
+
+                String[] parts = line.split(" ");
+                for (String part : parts) {
+                    part = part.trim();
+
+                    if (part.startsWith("(RG")) { // Register operand
+                        reg = part.replaceAll("[^0-9]", "");
+                    }
+                    if (part.startsWith("(S,")) { // Symbol operand
+                        int idx = extractIndex(part);
+                        mem = address(SYMTAB.getOrDefault(idx, 0));
+                    }
+                    if (part.startsWith("(L,")) { // Literal operand
+                        int idx = extractIndex(part);
+                        mem = address(LITTAB.getOrDefault(idx, 0));
+                    }
+                }
+
+                System.out.println(opcode + " " + reg + " " + mem);
+                LC++;
+            }
+        }
+    }
+
+    // =======================
+    // FILE LOADING HELPERS
+    // =======================
+    static void loadFile(String filename, Map<Integer, Integer> map, boolean isSymbol) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            int index = 1;
+
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty()) continue;
+
+                // For Symbol: format like A = 205
+                // For Literal: format like ='5' = 217
+                String[] parts = line.split("=");
+                if (parts.length < 2) continue;
+
+                try {
+                    int address = Integer.parseInt(parts[parts.length - 1].trim());
+                    map.put(index++, address);
+                } catch (NumberFormatException e) {
+                    System.out.println("Skipping invalid line in " + filename + ": " + line);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading " + filename + ": " + e.getMessage());
+        }
+    }
+
+    static void loadIntermediate(String filename) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.trim().isEmpty()) IC.add(line.trim());
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading " + filename + ": " + e.getMessage());
+        }
+    }
+
+    // =======================
+    // UTILITY FUNCTIONS
+    // =======================
+    static String getOpcode(String line) {
+        int start = line.indexOf(",") + 1;
+        int end = line.indexOf(")", start);
+        return pad2(line.substring(start, end).trim());
+    }
+
+    static int getConstant(String line) {
+        int start = line.indexOf("C,") + 2;
+        int end = line.indexOf(")", start);
+        return Integer.parseInt(line.substring(start, end).trim());
+    }
+
+    static int extractIndex(String part) {
+        return Integer.parseInt(part.replaceAll("[^0-9]", ""));
+    }
+
+    static String address(int value) {
+        return String.format("%03d", value);
+    }
+
+    static String pad2(String value) {
+        return String.format("%02d", Integer.parseInt(value));
+    }
+}
+        </pre>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+/* ---------- Data structure for Pass Two Algorithm ---------- */
+const algorithm = [
+  {
+    phase: "INITIALIZATION PHASE",
+    steps: [
+      {
+        title: "Step 1: Initialize Data Structures",
+        description: "Create empty data structures to store tables from Pass One",
+        details: [
+          "Create SYMTAB (Symbol Table) - Map<index, address>",
+          "Create LITTAB (Literal Table) - Map<index, address>",
+          "Create IC (Intermediate Code list) - List of strings",
+          "Initialize Location Counter LC = 0"
+        ],
+        code: `SYMTAB = {}  // Maps symbol index to address
+LITTAB = {}  // Maps literal index to address
+IC = []      // Stores intermediate code lines
+LC = 0       // Location Counter`,
+        example: "All data structures ready to load Pass One outputs"
+      },
+      {
+        title: "Step 2: Load Symbol Table",
+        description: "Read symtab.txt file generated by Pass One",
+        details: [
+          "Open 'symtab.txt' file",
+          "Read each line in format: 'SYMBOL = ADDRESS'",
+          "Parse line to extract address value",
+          "Store in SYMTAB with index (1, 2, 3...)",
+          "Index represents symbol number used in IC"
+        ],
+        code: `Open "symtab.txt"
+index = 1
+For each line in file:
+    Parse: symbol = address
+    SYMTAB[index] = address
+    index++`,
+        example: "A = 205 → SYMTAB[1] = 205\nB = 206 → SYMTAB[2] = 206"
+      },
+      {
+        title: "Step 3: Load Literal Table",
+        description: "Read littab.txt file generated by Pass One",
+        details: [
+          "Open 'littab.txt' file",
+          "Read each line in format: '='VALUE' = ADDRESS'",
+          "Parse line to extract address value",
+          "Store in LITTAB with index (1, 2, 3...)",
+          "Index represents literal number used in IC"
+        ],
+        code: `Open "littab.txt"
+index = 1
+For each line in file:
+    Parse: literal = address
+    LITTAB[index] = address
+    index++`,
+        example: "='5' = 217 → LITTAB[1] = 217\n='1' = 218 → LITTAB[2] = 218"
+      },
+      {
+        title: "Step 4: Load Intermediate Code",
+        description: "Read intermediate.txt file generated by Pass One",
+        details: [
+          "Open 'intermediate.txt' file",
+          "Read each line (one IC instruction per line)",
+          "Store each non-empty line in IC list",
+          "These lines will be processed to generate machine code"
+        ],
+        code: `Open "intermediate.txt"
+For each line in file:
+    if line is not empty:
+        IC.add(line)`,
+        example: "(AD,01) (C,200)\n(IS,04) (1) (S,1)\n(IS,01) (1) (L,1)"
+      },
+      {
+        title: "Step 5: Display Loaded Tables (Optional)",
+        description: "Print loaded tables for verification",
+        details: [
+          "Display SYMTAB contents",
+          "Display LITTAB contents",
+          "Display IC lines",
+          "This helps verify all data loaded correctly"
+        ],
+        code: `Print "=== SYMBOL TABLE ==="
+Print SYMTAB
+
+Print "=== LITERAL TABLE ==="
+Print LITTAB
+
+Print "=== INTERMEDIATE CODE ==="
+Print IC`,
+        example: "SYMTAB: {1=205, 2=206}\nLITTAB: {1=217}\nIC: [(AD,01)...]"
+      }
+    ]
+  },
+  {
+    phase: "MAIN PROCESSING LOOP",
+    steps: [
+      {
+        title: "Step 6: Start Machine Code Generation",
+        description: "Begin processing intermediate code line by line",
+        details: [
+          "Reset Location Counter LC = 0",
+          "Print header for machine code output",
+          "Start iterating through IC list",
+          "Each IC line will produce one machine code instruction (or none)"
+        ],
+        code: `LC = 0
+Print "=== MACHINE CODE ==="
+
+For each line in IC:
+    Process line to generate machine code`,
+        example: "Ready to process IC and generate machine code"
+      },
+      {
+        title: "Step 7: Read Next IC Line",
+        description: "Get the next intermediate code line to process",
+        details: [
+          "Get current line from IC list",
+          "Identify line type by checking first token:",
+          "  - (AD,...) = Assembler Directive",
+          "  - (DL,...) = Declarative Statement",
+          "  - (IS,...) = Instruction Statement"
+        ],
+        code: `line = IC[current]
+
+if line starts with "(AD":
+    goto Step 8 (Process Directive)
+else if line starts with "(DL":
+    goto Step 9 (Process Declaration)
+else if line starts with "(IS":
+    goto Step 10 (Process Instruction)`,
+        example: "(IS,04) (1) (S,1) → Identified as Instruction Statement"
+      }
+    ]
+  },
+  {
+    phase: "ASSEMBLER DIRECTIVE PROCESSING",
+    steps: [
+      {
+        title: "Step 8A: Process START Directive",
+        description: "Handle (AD,01) - Set starting address",
+        details: [
+          "Extract constant value from line: (C,value)",
+          "Set LC = extracted value",
+          "Do NOT generate any machine code",
+          "Continue to next IC line"
+        ],
+        code: `if line contains "(AD,01)":
+    constant = extractConstant(line)  // From (C,...)
+    LC = constant
+    // No machine code generated
+    continue`,
+        example: "(AD,01) (C,200) → LC = 200, no machine code output"
+      },
+      {
+        title: "Step 8B: Process ORIGIN Directive",
+        description: "Handle (AD,03) - Change Location Counter",
+        details: [
+          "Extract new address from line: (C,value)",
+          "Update LC = extracted value",
+          "Do NOT generate any machine code",
+          "Continue to next IC line"
+        ],
+        code: `if line contains "(AD,03)":
+    new_address = extractConstant(line)
+    LC = new_address
+    // No machine code generated
+    continue`,
+        example: "(AD,03) (C,205) → LC = 205, no machine code output"
+      },
+      {
+        title: "Step 8C: Process END Directive",
+        description: "Handle (AD,02) - Mark end of program",
+        details: [
+          "Print 'Program Ended' message",
+          "Do NOT generate machine code",
+          "Do NOT increment LC",
+          "Continue to next line (if any) or finish"
+        ],
+        code: `if line contains "(AD,02)":
+    Print "Program Ended."
+    // No machine code generated
+    continue`,
+        example: "(AD,02) → Output: 'Program Ended.'"
+      }
+    ]
+  },
+  {
+    phase: "DECLARATIVE STATEMENT PROCESSING",
+    steps: [
+      {
+        title: "Step 9A: Process DC (Define Constant)",
+        description: "Handle (DL,01) - Generate machine code for constant",
+        details: [
+          "Print current LC address (formatted as 3 digits)",
+          "Extract constant value from (C,...)",
+          "Generate machine code: '00 00 <address>'",
+          "Format: 00 (no opcode) 00 (no register) <3-digit value>",
+          "Increment LC by 1"
+        ],
+        code: `if line contains "(DL,01)":
+    Print LC (formatted as 3 digits) + ":"
+    constant = extractConstant(line)
+    Print "00 00 " + format(constant, 3 digits)
+    LC = LC + 1`,
+        example: "(DL,01) (C,5) at LC=205 → Output: '205:  00 00 005', LC=206"
+      },
+      {
+        title: "Step 9B: Process DS (Define Storage)",
+        description: "Handle (DL,02) - Reserve memory space",
+        details: [
+          "Print current LC address",
+          "Generate machine code: '00 00 000'",
+          "This reserves space without storing value",
+          "Increment LC by 1"
+        ],
+        code: `if line contains "(DL,02)":
+    Print LC (formatted) + ":"
+    Print "00 00 000"
+    LC = LC + 1`,
+        example: "(DL,02) (C,1) at LC=206 → Output: '206:  00 00 000', LC=207"
+      }
+    ]
+  },
+  {
+    phase: "INSTRUCTION STATEMENT PROCESSING",
+    steps: [
+      {
+        title: "Step 10: Start Processing IS Line",
+        description: "Begin generating machine code for instruction",
+        details: [
+          "Print current LC address",
+          "Initialize: opcode = '00', register = '0', memory = '000'",
+          "Extract opcode from (IS,XX)",
+          "Prepare to process operands"
+        ],
+        code: `if line starts with "(IS":
+    Print LC (formatted) + ":"
+    opcode = extractOpcode(line)  // Get XX from (IS,XX)
+    register = "0"
+    memory = "000"`,
+        example: "(IS,04) → LC=200, opcode='04'"
+      },
+      {
+        title: "Step 11: Extract Opcode",
+        description: "Get the operation code from IC line",
+        details: [
+          "Parse IC line to find (IS,XX)",
+          "Extract XX value (instruction code)",
+          "Format as 2-digit string with leading zero if needed",
+          "This becomes the first part of machine code"
+        ],
+        code: `Find "(IS," in line
+Extract number after comma
+Format as 2 digits
+opcode = formatted_value`,
+        example: "(IS,04) → opcode = '04'\n(IS,1) → opcode = '01'"
+      },
+      {
+        title: "Step 12: Process Register Operand",
+        description: "Check if instruction has register operand",
+        details: [
+          "Look for (RG,X) or just (X) in the line",
+          "If found, extract register number",
+          "Store as single digit (1-4)",
+          "This becomes register field in machine code"
+        ],
+        code: `Split line into tokens
+For each token:
+    if token matches register pattern:
+        register = extract_digit(token)`,
+        example: "(IS,04) (1) (S,1) → register = '1' (AREG)"
+      },
+      {
+        title: "Step 13A: Process Symbol Operand",
+        description: "Handle (S,X) - Symbol reference in instruction",
+        details: [
+          "Look for (S,X) in the line",
+          "Extract index X",
+          "Look up address in SYMTAB[X]",
+          "Format address as 3-digit string",
+          "This becomes memory address field"
+        ],
+        code: `if token matches "(S,X)":
+    index = extract_index(token)
+    address = SYMTAB[index]
+    memory = format(address, 3 digits)`,
+        example: "(S,1) → index=1, SYMTAB[1]=205 → memory='205'"
+      },
+      {
+        title: "Step 13B: Process Literal Operand",
+        description: "Handle (L,X) - Literal reference in instruction",
+        details: [
+          "Look for (L,X) in the line",
+          "Extract index X",
+          "Look up address in LITTAB[X]",
+          "Format address as 3-digit string",
+          "This becomes memory address field"
+        ],
+        code: `if token matches "(L,X)":
+    index = extract_index(token)
+    address = LITTAB[index]
+    memory = format(address, 3 digits)`,
+        example: "(L,1) → index=1, LITTAB[1]=217 → memory='217'"
+      },
+      {
+        title: "Step 14: Generate Complete Machine Code",
+        description: "Output the final machine instruction",
+        details: [
+          "Combine all parts: opcode + register + memory",
+          "Format: 'XX R MMM'",
+          "  XX = 2-digit opcode",
+          "  R = 1-digit register",
+          "  MMM = 3-digit memory address",
+          "Print complete machine code line",
+          "Increment LC by 1"
+        ],
+        code: `machine_code = opcode + " " + register + " " + memory
+Print machine_code
+LC = LC + 1`,
+        example: "200:  04 1 205\n(opcode=04, reg=1, mem=205)"
+      }
+    ]
+  },
+  {
+    phase: "COMPLETION PHASE",
+    steps: [
+      {
+        title: "Step 15: Check If More IC Lines",
+        description: "Determine if processing is complete",
+        details: [
+          "Check if there are more lines in IC list",
+          "If YES → Go back to Step 7 (Read Next IC Line)",
+          "If NO → Continue to Step 16 (Finalize)"
+        ],
+        code: `if more lines in IC:
+    goto Step 7
+else:
+    goto Step 16`,
+        example: "All IC lines processed → Move to completion"
+      },
+      {
+        title: "Step 16: Finalize and Display Summary",
+        description: "Complete machine code generation",
+        details: [
+          "Print completion message",
+          "Display statistics (optional):",
+          "  - Total lines processed",
+          "  - Final LC value",
+          "All machine code has been output during processing"
+        ],
+        code: `Print "\\n=== MACHINE CODE GENERATION COMPLETE ==="
+Print "Total instructions: " + IC.size()
+Print "Final LC: " + LC`,
+        example: "✓ Machine code generation complete!"
+      },
+      {
+        title: "Step 17: End Program",
+        description: "Pass Two is complete!",
+        details: [
+          "All intermediate code converted to machine code",
+          "Machine code can now be loaded and executed",
+          "Output shows memory addresses and actual machine instructions"
+        ],
+        code: `Print "✓ Pass Two Complete!"
+exit(0)`,
+        example: "Ready to execute the program!"
+      }
+    ]
+  }
+];
+
+/* ---------- Render UI ---------- */
+const root = document.getElementById('phases-root');
+
+function createPhaseElement(phaseObj, pIndex) {
+  const phase = document.createElement('div'); phase.className='phase';
+  const header = document.createElement('div'); header.className='phase-header';
+  const icon = document.createElement('div'); icon.style.width='36px'; icon.style.height='36px';
+  icon.style.display='grid';icon.style.placeItems='center';icon.style.borderRadius='8px';
+  icon.style.background='rgba(255,255,255,0.06)'; icon.style.color='white'; icon.style.fontWeight='700';
+  icon.textContent='▶';
+  const h2 = document.createElement('h2'); h2.textContent = phaseObj.phase;
+  header.appendChild(icon); header.appendChild(h2);
+  phase.appendChild(header);
+
+  const body = document.createElement('div'); body.className='phase-body';
+
+  phaseObj.steps.forEach((stepObj, sIndex) => {
+    const stepWrap = document.createElement('div'); stepWrap.className='step';
+    const btn = document.createElement('button'); btn.className='step-button';
+    btn.type='button';
+
+    const iconDot = document.createElement('div'); iconDot.className='icon'; iconDot.textContent = String(sIndex+1);
+    const content = document.createElement('div'); content.className='step-content';
+    const t = document.createElement('h3'); t.className='step-title'; t.textContent = stepObj.title;
+    const d = document.createElement('p'); d.className='step-desc'; d.textContent = stepObj.description;
+
+    const chev = document.createElement('div'); chev.className='chev'; chev.innerHTML='›';
+
+    content.appendChild(t); content.appendChild(d);
+    btn.appendChild(iconDot); btn.appendChild(content); btn.appendChild(chev);
+    stepWrap.appendChild(btn);
+
+    // details area (hidden by default)
+    const details = document.createElement('div'); details.className='details'; details.style.display='none';
+    // detailed steps
+    const detBlock = document.createElement('div'); detBlock.className='block';
+    const detTitle = document.createElement('h4'); detTitle.textContent='📋 Detailed Steps:';
+    detBlock.appendChild(detTitle);
+    const ul = document.createElement('ul'); ul.className='list';
+    stepObj.details.forEach(it=>{
+      const li = document.createElement('li'); li.textContent = it;
+      ul.appendChild(li);
+    });
+    detBlock.appendChild(ul);
+    details.appendChild(detBlock);
+
+    // pseudocode block
+    const codeBlock = document.createElement('div'); codeBlock.className='block';
+    const codeTitle = document.createElement('h4'); codeTitle.textContent='💻 Pseudocode:';
+    const pre = document.createElement('pre'); pre.className='code';
+    pre.textContent = stepObj.code;
+    codeBlock.appendChild(codeTitle); codeBlock.appendChild(pre);
+    details.appendChild(codeBlock);
+
+    // example block
+    const exBlock = document.createElement('div'); exBlock.className='block';
+    const exTitle = document.createElement('h4'); exTitle.textContent='✨ Example:';
+    const ex = document.createElement('div'); ex.className='example'; ex.textContent = stepObj.example;
+    exBlock.appendChild(exTitle); exBlock.appendChild(ex);
+    details.appendChild(exBlock);
+
+    // Add small connector except last step
+    btn.addEventListener('click', ()=>{
+      const allButtons = document.querySelectorAll('.step-button');
+      allButtons.forEach(b=>b.classList.remove('current'));
+      const allChevs = document.querySelectorAll('.chev'); allChevs.forEach(c=>c.classList.remove('rotate'));
+      btn.classList.add('current');
+      chev.classList.add('rotate');
+      // mark completed when clicked (toggle)
+      if (!btn.classList.contains('completed')) {
+        btn.classList.add('completed');
+        iconDot.classList.add('completed');
+      }
+      // toggle details display
+      const visible = details.style.display === 'block';
+      // hide all details
+      document.querySelectorAll('.details').forEach(el=>el.style.display='none');
+      if (!visible) details.style.display = 'block';
+      else details.style.display = 'none';
+      // scroll small amount into view for mobile
+      setTimeout(()=>{ details.scrollIntoView({behavior:'smooth', block:'center'}); }, 120);
+    });
+
+    stepWrap.appendChild(details);
+
+    // connector line if not last in phase
+    if (sIndex < phaseObj.steps.length - 1) {
+      const conn = document.createElement('div'); conn.className='connector';
+      const line = document.createElement('div'); line.className='line'; conn.appendChild(line);
+      stepWrap.appendChild(conn);
+    }
+
+    body.appendChild(stepWrap);
+  });
+
+  phase.appendChild(body);
+
+  // connector between phases
+  if (pIndex < algorithm.length - 1) {
+    const outer = document.createElement('div'); outer.style.display='flex';outer.style.justifyContent='center';outer.style.margin='14px 0';
+    const col = document.createElement('div'); col.style.display='flex';col.style.flexDirection='column';col.style.alignItems='center';
+    const line = document.createElement('div'); line.style.width='2px';line.style.height='44px';line.style.background='#ddd6fe';line.style.borderRadius='2px';
+    const arrow = document.createElement('div'); arrow.style.transform='rotate(90deg)'; arrow.style.marginTop='8px'; arrow.style.color='#c026d3';
+    arrow.innerHTML='&#8250;'; col.appendChild(line); col.appendChild(arrow); outer.appendChild(col);
+    phase.appendChild(outer);
+  }
+
+  return phase;
+}
+
+(function init() {
+  algorithm.forEach((ph, idx)=>{
+    const el = createPhaseElement(ph, idx);
+    root.appendChild(el);
+  });
+})();
+
+/* ---------- Copy & Toggle Java code ---------- */
+const copyBtn = document.getElementById('copyBtn');
+const toggleBtn = document.getElementById('toggleBtn');
+const javaBlock = document.getElementById('javaBlock');
+const javaCode = document.getElementById('javaCode').innerText;
+
+copyBtn.addEventListener('click', async ()=>{
+  try {
+    await navigator.clipboard.writeText(javaCode);
+    copyBtn.textContent = 'Copied ✓';
+    setTimeout(()=> copyBtn.textContent = 'Copy code', 1600);
+  } catch (e) {
+    copyBtn.textContent = 'Copy failed';
+    setTimeout(()=> copyBtn.textContent = 'Copy code', 1600);
+  }
+});
+
+toggleBtn.addEventListener('click', ()=>{
+  if (javaBlock.style.display === 'none') {
+    javaBlock.style.display = 'block'; toggleBtn.textContent = 'Hide';
+  } else {
+    javaBlock.style.display = 'none'; toggleBtn.textContent = 'Show';
+  }
+});
+</script>
+</body>
+</html>
