@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tkinter Event Registration Form — Flowchart</title>
+  <style>
+    :root{
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --accent1: #c026d3;
+      --accent2: #0891b2;
+      --muted: #6b7280;
+      --success: #16a34a;
+      --error: #ef4444;
+      --init: #6366f1;
+      --validation: #f59e0b;
+      --submit: #10b981;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#fae8ff 0%, #e0f2fe 100%);
+      color:#0f172a;
+      -webkit-font-smoothing:antialiased;
+      padding:28px;
+    }
+
+    .container{max-width:1200px;margin:0 auto;}
+
+    .header{text-align:center;margin-bottom:18px}
+    .title{font-size:32px;font-weight:700;color:#0f172a;margin:0}
+    .subtitle{color:var(--accent1);margin-top:6px;font-weight:600}
+    .hint{color:var(--muted);font-size:13px;margin-top:8px}
+
+    .notice{
+      background:#fff7ed;border-left:6px solid #f59e0b;padding:12px;border-radius:8px;margin:20px 0;color:#92400e;
+    }
+
+    .features{
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin:20px 0;
+    }
+    .feature-card{
+      background:white;border-radius:10px;padding:16px;box-shadow:0 4px 12px rgba(0,0,0,0.04);
+      border-left:4px solid;
+    }
+    .feature-card.f1{border-color:#3b82f6}
+    .feature-card.f2{border-color:#f59e0b}
+    .feature-card.f3{border-color:#10b981}
+    .feature-card h3{margin:0 0 8px 0;font-size:16px;color:#0f172a}
+    .feature-card p{margin:0;font-size:13px;color:var(--muted);line-height:1.5}
+
+    .phase{
+      margin-bottom:22px;border-radius:10px;overflow:hidden;
+      box-shadow:0 8px 24px rgba(2,6,23,0.06);
+    }
+    .phase-header{
+      padding:14px 16px;display:flex;align-items:center;gap:12px;
+      color:white;
+    }
+    .phase-header.init-phase{background:linear-gradient(90deg,#6366f1,#8b5cf6)}
+    .phase-header.validation-phase{background:linear-gradient(90deg,#f59e0b,#ef4444)}
+    .phase-header.submit-phase{background:linear-gradient(90deg,#10b981,#06b6d4)}
+    .phase-header.clear-phase{background:linear-gradient(90deg,#ef4444,#f43f5e)}
+    .phase-header h2{margin:0;font-size:18px}
+    .phase-body{background:var(--card);padding:18px;border-top:1px solid #fae8ff}
+
+    .step{margin-bottom:14px}
+    .step-button{
+      width:100%;display:flex;align-items:flex-start;gap:12px;
+      background:#f8fafc;border:1px solid #e6edf6;padding:12px;border-radius:10px;
+      cursor:pointer;transition:all .18s ease;
+    }
+    .step-button:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(16,24,40,0.06)}
+    .step-button.current{border-color:#c026d3;background:#fae8ff;box-shadow:0 10px 30px rgba(192,38,211,0.08)}
+    .step-button.completed{border-color:#bbf7d0;background:#f0fdf4}
+
+    .icon{
+      margin-top:4px;width:22px;height:22px;border-radius:999px;
+      display:grid;place-items:center;background:#fff;border:1px solid #e6edf6;
+      color:#9ca3af;font-weight:700;font-size:12px;
+    }
+    .icon.completed{background:#ecfdf5;color:var(--success);border-color:#bbf7d0}
+    .step-content{flex:1}
+    .step-title{font-size:15px;font-weight:700;margin:0 0 4px 0;color:#0f172a}
+    .step-desc{margin:0;font-size:13px;color:var(--muted)}
+
+    .chev{width:22px;height:22px;color:#9ca3af;transition:transform .18s ease;flex-shrink:0}
+    .chev.rotate{transform:rotate(90deg)}
+
+    .details{
+      margin-left:46px;margin-top:12px;padding:14px;border-radius:10px;
+      background:#f8fbff;border:1px solid #e6f0ff;animation:fadeIn .12s ease;
+    }
+    .block{margin-bottom:12px}
+    .block h4{margin:0 0 8px 0;font-size:14px;color:#0f172a}
+    .list{padding-left:18px;margin:0;color:#0f172a}
+    .list li{margin-bottom:6px;font-size:13px;color:#083344}
+    pre.code{
+      background:#0f172a;color:#b7f5d0;padding:12px;border-radius:8px;
+      overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    }
+    .example{
+      background:#faf5ff;border:1px solid #f3e8ff;padding:10px;border-radius:8px;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:#221e3b
+    }
+
+    .connector{display:flex;justify-content:center;margin:14px 0}
+    .connector .line{width:2px;height:44px;background:#ddd6fe;border-radius:2px}
+
+    .howto{background:linear-gradient(90deg,#c026d3,#06b6d4);color:white;padding:16px;border-radius:10px;margin-top:18px}
+    .howto p{margin:6px 0;font-size:14px}
+
+    .code-panel{
+      margin-top:18px;padding:12px;border-radius:8px;background:#111827;
+      color:#f8fafc;border:1px solid rgba(255,255,255,0.04);
+    }
+    .code-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .small-btn{background:rgba(255,255,255,0.06);border:none;color:white;padding:8px 10px;border-radius:8px;cursor:pointer}
+
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none}}
+
+    @media (max-width:720px){
+      .phase-header h2{font-size:16px}
+      .title{font-size:22px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">Tkinter Event Registration Form</h1>
+      <div class="subtitle">GUI Form with Validation & Error Handling</div>
+      <div class="hint">Click steps to understand form creation, validation, and submission flow</div>
+    </div>
+
+    <div class="notice">
+      <div style="font-weight:600">🎯 Application Overview:</div>
+      <div style="font-size:13px;margin-top:6px;color:#7a4f1a">
+        A complete event registration form using Python Tkinter with input validation, error highlighting, and confirmation window.
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature-card f1">
+        <h3>📝 Form Fields</h3>
+        <p>Name, Email, Phone, Event dropdown, Gender radio buttons, Terms checkbox with placeholders and default values.</p>
+      </div>
+      <div class="feature-card f2">
+        <h3>✅ Validation</h3>
+        <p>Email format check, phone number validation, required field checks, visual error feedback with red highlights.</p>
+      </div>
+      <div class="feature-card f3">
+        <h3>🎉 Confirmation</h3>
+        <p>Success popup window displaying all submitted data, clear form functionality, user-friendly error messages.</p>
+      </div>
+    </div>
+
+    <div id="phases-root"></div>
+
+    <div class="howto">
+      <h3 style="margin:0 0 8px 0">🎓 Key Concepts for Viva</h3>
+      <p><strong>Tkinter Basics:</strong> root = tk.Tk() creates main window, mainloop() runs event loop</p>
+      <p><strong>Widgets:</strong> Entry (text input), Label, Button, OptionMenu (dropdown), Radiobutton, Checkbutton</p>
+      <p><strong>Variables:</strong> StringVar(), IntVar() for dynamic data binding with widgets</p>
+      <p><strong>Validation:</strong> .strip() removes whitespace, .isdigit() checks numbers, custom email validator</p>
+      <p><strong>Error Handling:</strong> messagebox.showerror() for alerts, .config(bg="color") for visual feedback</p>
+    </div>
+
+    <div class="code-panel">
+      <div class="code-header">
+        <div style="display:flex;align-items:center;gap:12px">
+          <strong>event_registration.py</strong>
+          <span style="opacity:0.8;font-size:13px">(Complete Implementation)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button id="copyBtn" class="small-btn">Copy code</button>
+          <button id="toggleBtn" class="small-btn">Hide</button>
+        </div>
+      </div>
+
+      <div id="javaBlock" style="margin-top:10px;max-height:420px;overflow:auto">
+        <pre id="javaCode" style="white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px">
+import tkinter as tk
+from tkinter import messagebox
+
+def validate_email(email):
+    return "@" in email and "." in email
+
+# Submit function
+def submit_form():
+    name = entry_name.get().strip()
+    email = entry_email.get().strip()
+    phone = entry_phone.get().strip()
+    event = event_var.get()
+    gender = gender_var.get()
+    agree = agree_var.get()
+
+    # Reset colors first
+    entry_name.config(bg="white")
+    entry_email.config(bg="white")
+    entry_phone.config(bg="white")
+
+    if not name:
+        entry_name.config(bg="#ffcccc")
+        messagebox.showerror("Error", "Please enter your full name!")
+        return
+
+    if not email or not validate_email(email):
+        entry_email.config(bg="#ffcccc")
+        messagebox.showerror("Error", "Please enter a valid email address!")
+        return
+
+    if not phone.isdigit() or len(phone) < 10:
+        entry_phone.config(bg="#ffcccc")
+        messagebox.showerror("Error", "Please enter a valid phone number!")
+        return
+
+    if event == "Select Event":
+        messagebox.showerror("Error", "Please select an event!")
+        return
+
+    if gender == "":
+        messagebox.showerror("Error", "Please select your gender!")
+        return
+
+    if agree == 0:
+        messagebox.showerror("Error", "You must agree to the terms!")
+        return
+
+    # Success confirmation in a new window
+    confirm_window = tk.Toplevel(root)
+    confirm_window.title("Registration Confirmed")
+    confirm_window.geometry("350x250")
+
+    tk.Label(confirm_window, text="✅ Registration Successful!", font=("Arial", 14), fg="green").pack(pady=10)
+    tk.Label(confirm_window, text=f"Name: {name}").pack(pady=5)
+    tk.Label(confirm_window, text=f"Email: {email}").pack(pady=5)
+    tk.Label(confirm_window, text=f"Phone: {phone}").pack(pady=5)
+    tk.Label(confirm_window, text=f"Event: {event}").pack(pady=5)
+    tk.Label(confirm_window, text=f"Gender: {gender}").pack(pady=5)
+
+    tk.Button(confirm_window, text="OK", command=confirm_window.destroy, bg="blue", fg="white").pack(pady=10)
+
+    clear_form()
+
+# Clear function
+def clear_form():
+    entry_name.delete(0, tk.END)
+    entry_email.delete(0, tk.END)
+    entry_phone.delete(0, tk.END)
+    event_var.set("Select Event")
+    gender_var.set("")
+    agree_var.set(0)
+    entry_name.config(bg="white")
+    entry_email.config(bg="white")
+    entry_phone.config(bg="white")
+
+# Main window
+root = tk.Tk()
+root.title("Event Registration Form")
+root.geometry("420x550")
+
+tk.Label(root, text="Event Registration Form", font=("Arial", 16, "bold")).pack(pady=10)
+
+# Name
+tk.Label(root, text="Full Name:").pack(anchor="w", padx=10, pady=5)
+entry_name = tk.Entry(root, width=45)
+entry_name.insert(0, "Enter your full name")
+entry_name.pack(padx=10)
+
+# Email
+tk.Label(root, text="Email:").pack(anchor="w", padx=10, pady=5)
+entry_email = tk.Entry(root, width=45)
+entry_email.insert(0, "example@email.com")
+entry_email.pack(padx=10)
+
+# Phone
+tk.Label(root, text="Phone:").pack(anchor="w", padx=10, pady=5)
+entry_phone = tk.Entry(root, width=45)
+entry_phone.insert(0, "10-digit phone number")
+entry_phone.pack(padx=10)
+
+# Event Selection
+tk.Label(root, text="Select Event:").pack(anchor="w", padx=10, pady=5)
+event_var = tk.StringVar(value="Select Event")
+events = ["Select Event", "Workshop", "Seminar", "Hackathon", "Tech Talk"]
+tk.OptionMenu(root, event_var, *events).pack(padx=10, pady=5)
+
+# Gender
+tk.Label(root, text="Gender:").pack(anchor="w", padx=10, pady=5)
+gender_var = tk.StringVar()
+tk.Radiobutton(root, text="Male", variable=gender_var, value="Male").pack(anchor="w", padx=20)
+tk.Radiobutton(root, text="Female", variable=gender_var, value="Female").pack(anchor="w", padx=20)
+tk.Radiobutton(root, text="Other", variable=gender_var, value="Other").pack(anchor="w", padx=20)
+
+# Terms & Conditions
+agree_var = tk.IntVar()
+tk.Checkbutton(root, text="I agree to the terms and conditions", variable=agree_var).pack(anchor="w", padx=10, pady=10)
+
+# Buttons Frame
+btn_frame = tk.Frame(root)
+btn_frame.pack(pady=20)
+
+tk.Button(btn_frame, text="Submit", command=submit_form, bg="green", fg="white", width=10).grid(row=0, column=0, padx=20)
+tk.Button(btn_frame, text="Clear", command=clear_form, bg="red", fg="white", width=10).grid(row=0, column=1, padx=20)
+
+root.mainloop()
+        </pre>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+const algorithm = [
+  {
+    phase: "INITIALIZATION & GUI SETUP",
+    phaseClass: "init-phase",
+    steps: [
+      {
+        title: "Step 1: Import Required Modules",
+        description: "Import Tkinter and messagebox for GUI",
+        details: [
+          "import tkinter as tk - Main GUI library",
+          "from tkinter import messagebox - For popup dialogs",
+          "tk provides widgets like Entry, Button, Label",
+          "messagebox provides showerror, showinfo functions"
+        ],
+        code: `import tkinter as tk
+from tkinter import messagebox`,
+        example: "✓ Tkinter modules imported successfully"
+      },
+      {
+        title: "Step 2: Define Email Validator Function",
+        description: "Create helper function to validate email format",
+        details: [
+          "Function: validate_email(email)",
+          "Check if email contains '@' symbol",
+          "Check if email contains '.' (dot)",
+          "Returns True if both present, False otherwise",
+          "Simple validation - checks basic format"
+        ],
+        code: `def validate_email(email):
+    return "@" in email and "." in email
+    
+# Valid: user@example.com
+# Invalid: userexample.com (no @)
+# Invalid: user@examplecom (no .)`,
+        example: "validate_email('john@example.com') → True\nvalidate_email('invalid') → False"
+      },
+      {
+        title: "Step 3: Create Main Window",
+        description: "Initialize root Tkinter window",
+        details: [
+          "root = tk.Tk() - Creates main window object",
+          "root.title() - Sets window title bar text",
+          "root.geometry('420x550') - Sets width×height in pixels",
+          "This is the parent container for all widgets"
+        ],
+        code: `root = tk.Tk()
+root.title("Event Registration Form")
+root.geometry("420x550")  # Width x Height`,
+        example: "Window created: 420px wide, 550px tall\nTitle: 'Event Registration Form'"
+      },
+      {
+        title: "Step 4: Add Form Header",
+        description: "Create title label at top of form",
+        details: [
+          "tk.Label() - Creates text display widget",
+          "text='...' - Label content",
+          "font=('Arial', 16, 'bold') - Font family, size, style",
+          ".pack(pady=10) - Add to window with 10px vertical padding"
+        ],
+        code: `tk.Label(root, 
+    text="Event Registration Form", 
+    font=("Arial", 16, "bold")
+).pack(pady=10)`,
+        example: "Bold header 'Event Registration Form' displayed at top"
+      },
+      {
+        title: "Step 5: Create Name Input Field",
+        description: "Add label and entry for full name",
+        details: [
+          "Label positioned left-aligned (anchor='w')",
+          "tk.Entry() - Single-line text input widget",
+          "width=45 - Field width in characters",
+          ".insert(0, '...') - Add placeholder text",
+          "entry_name stores reference for later access"
+        ],
+        code: `tk.Label(root, text="Full Name:").pack(anchor="w", padx=10, pady=5)
+entry_name = tk.Entry(root, width=45)
+entry_name.insert(0, "Enter your full name")
+entry_name.pack(padx=10)`,
+        example: "Label: 'Full Name:'\nInput field with placeholder: 'Enter your full name'"
+      },
+      {
+        title: "Step 6: Create Email Input Field",
+        description: "Add label and entry for email address",
+        details: [
+          "Similar structure to name field",
+          "Placeholder shows example format",
+          "entry_email stored for validation later",
+          "Will be validated with validate_email() function"
+        ],
+        code: `tk.Label(root, text="Email:").pack(anchor="w", padx=10, pady=5)
+entry_email = tk.Entry(root, width=45)
+entry_email.insert(0, "example@email.com")
+entry_email.pack(padx=10)`,
+        example: "Label: 'Email:'\nPlaceholder: 'example@email.com'"
+      },
+      {
+        title: "Step 7: Validate Gender Selection",
+        description: "Check if gender radio button is selected",
+        details: [
+          "gender_var.get() returns empty string if nothing selected",
+          "Checks if gender == '' (no selection)",
+          "User must select one radio button",
+          "Shows error popup if not selected"
+        ],
+        code: `if gender == "":
+    messagebox.showerror("Error", 
+        "Please select your gender!")
+    return`,
+        example: "❌ Error if no radio button selected\n✓ Valid: 'Male', 'Female', or 'Other'"
+      },
+      {
+        title: "Step 8: Validate Terms Agreement",
+        description: "Ensure user agreed to terms",
+        details: [
+          "agree_var.get() returns 0 (unchecked) or 1 (checked)",
+          "if agree == 0: means checkbox not checked",
+          "User must check the terms checkbox",
+          "Cannot proceed without agreement"
+        ],
+        code: `if agree == 0:
+    messagebox.showerror("Error", 
+        "You must agree to the terms!")
+    return`,
+        example: "❌ Error if checkbox unchecked (agree=0)\n✓ Valid if checked (agree=1)"
+      },
+      {
+        title: "Step 9: All Validations Passed",
+        description: "All inputs are valid, proceed to confirmation",
+        details: [
+          "If code reaches here, all validations passed",
+          "No return statements executed",
+          "All fields have valid data",
+          "Ready to show confirmation window",
+          "Proceed to create success popup"
+        ],
+        code: `# All validations passed!
+# name, email, phone: valid format
+# event: selected from dropdown
+# gender: radio button chosen
+# agree: checkbox checked`,
+        example: "✓ All validations passed!\nReady to show confirmation"
+      }
+    ]
+  },
+  {
+    phase: "SUCCESS CONFIRMATION WINDOW",
+    phaseClass: "submit-phase",
+    steps: [
+      {
+        title: "Step 1: Create Confirmation Window",
+        description: "Open new popup window for success message",
+        details: [
+          "tk.Toplevel(root) - Creates child window",
+          "Toplevel = secondary window (popup)",
+          "Parent is root window",
+          ".title() - Sets window title",
+          ".geometry() - Sets window size (350×250)"
+        ],
+        code: `confirm_window = tk.Toplevel(root)
+confirm_window.title("Registration Confirmed")
+confirm_window.geometry("350x250")`,
+        example: "New popup window opens:\nTitle: 'Registration Confirmed'\nSize: 350×250 pixels"
+      },
+      {
+        title: "Step 2: Add Success Header",
+        description: "Display success message with checkmark",
+        details: [
+          "Creates label with ✅ emoji",
+          "font=('Arial', 14) - Larger font for emphasis",
+          "fg='green' - Text color green",
+          ".pack(pady=10) - Add 10px vertical padding",
+          "Confirms successful registration"
+        ],
+        code: `tk.Label(confirm_window, 
+    text="✅ Registration Successful!", 
+    font=("Arial", 14), 
+    fg="green"
+).pack(pady=10)`,
+        example: "✅ Registration Successful!\n(Large, green text at top)"
+      },
+      {
+        title: "Step 3: Display Name",
+        description: "Show submitted name value",
+        details: [
+          "f-string formatting: f'Name: {name}'",
+          "Displays actual value user entered",
+          ".pack(pady=5) - 5px vertical spacing",
+          "Shows confirmation of data received"
+        ],
+        code: `tk.Label(confirm_window, 
+    text=f"Name: {name}"
+).pack(pady=5)`,
+        example: "Name: John Doe"
+      },
+      {
+        title: "Step 4: Display Email",
+        description: "Show submitted email address",
+        details: [
+          "Displays validated email",
+          "Confirms email format was correct",
+          "User can verify entered correctly"
+        ],
+        code: `tk.Label(confirm_window, 
+    text=f"Email: {email}"
+).pack(pady=5)`,
+        example: "Email: john@example.com"
+      },
+      {
+        title: "Step 5: Display Phone Number",
+        description: "Show submitted phone number",
+        details: [
+          "Displays validated phone",
+          "Shows all 10+ digits entered",
+          "Confirms numeric validation passed"
+        ],
+        code: `tk.Label(confirm_window, 
+    text=f"Phone: {phone}"
+).pack(pady=5)`,
+        example: "Phone: 1234567890"
+      },
+      {
+        title: "Step 6: Display Selected Event",
+        description: "Show chosen event from dropdown",
+        details: [
+          "Displays event user selected",
+          "Confirms dropdown selection",
+          "One of: Workshop, Seminar, Hackathon, Tech Talk"
+        ],
+        code: `tk.Label(confirm_window, 
+    text=f"Event: {event}"
+).pack(pady=5)`,
+        example: "Event: Workshop"
+      },
+      {
+        title: "Step 7: Display Gender",
+        description: "Show selected gender",
+        details: [
+          "Displays radio button selection",
+          "Shows: Male, Female, or Other",
+          "Confirms user's choice"
+        ],
+        code: `tk.Label(confirm_window, 
+    text=f"Gender: {gender}"
+).pack(pady=5)`,
+        example: "Gender: Male"
+      },
+      {
+        title: "Step 8: Add OK Button",
+        description: "Button to close confirmation window",
+        details: [
+          "command=confirm_window.destroy - Closes popup",
+          ".destroy() - Removes window from screen",
+          "bg='blue', fg='white' - Blue button, white text",
+          "User clicks OK to dismiss confirmation"
+        ],
+        code: `tk.Button(confirm_window, 
+    text="OK", 
+    command=confirm_window.destroy, 
+    bg="blue", fg="white"
+).pack(pady=10)`,
+        example: "[OK] button (blue)\nClicks closes confirmation window"
+      },
+      {
+        title: "Step 9: Clear Form After Success",
+        description: "Reset main form to empty state",
+        details: [
+          "Calls clear_form() function",
+          "Removes all entered data",
+          "Prepares form for next registration",
+          "User can register another person"
+        ],
+        code: `clear_form()
+# Main form now cleared and ready for new entry`,
+        example: "✓ Confirmation shown\n✓ Main form cleared for next registration"
+      }
+    ]
+  },
+  {
+    phase: "CLEAR FORM FUNCTIONALITY",
+    phaseClass: "clear-phase",
+    steps: [
+      {
+        title: "Step 1: Clear Name Field",
+        description: "Remove all text from name entry",
+        details: [
+          ".delete(0, tk.END) - Deletes from start to end",
+          "0 = beginning of text",
+          "tk.END = end of text",
+          "Removes all characters including placeholder"
+        ],
+        code: `def clear_form():
+    entry_name.delete(0, tk.END)`,
+        example: "Name field: 'John Doe' → '' (empty)"
+      },
+      {
+        title: "Step 2: Clear Email Field",
+        description: "Remove all text from email entry",
+        details: [
+          "Same deletion method as name",
+          "Clears entire email field",
+          "Removes any entered email address"
+        ],
+        code: `entry_email.delete(0, tk.END)`,
+        example: "Email field: 'john@example.com' → '' (empty)"
+      },
+      {
+        title: "Step 3: Clear Phone Field",
+        description: "Remove all text from phone entry",
+        details: [
+          "Deletes all phone number digits",
+          "Field becomes empty",
+          "Ready for new input"
+        ],
+        code: `entry_phone.delete(0, tk.END)`,
+        example: "Phone field: '1234567890' → '' (empty)"
+      },
+      {
+        title: "Step 4: Reset Event Dropdown",
+        description: "Set dropdown back to default",
+        details: [
+          ".set('Select Event') - Changes variable value",
+          "Resets dropdown to initial state",
+          "Shows 'Select Event' again",
+          "User must select event again"
+        ],
+        code: `event_var.set("Select Event")`,
+        example: "Dropdown: 'Workshop' → 'Select Event' (default)"
+      },
+      {
+        title: "Step 5: Clear Gender Selection",
+        description: "Deselect all radio buttons",
+        details: [
+          ".set('') - Sets variable to empty string",
+          "Deselects all radio buttons",
+          "No gender selected",
+          "All radio buttons become unchecked"
+        ],
+        code: `gender_var.set("")`,
+        example: "Radio buttons: ⚫ Male → ⚪ Male (all unchecked)"
+      },
+      {
+        title: "Step 6: Uncheck Terms Checkbox",
+        description: "Reset checkbox to unchecked",
+        details: [
+          ".set(0) - Sets integer variable to 0",
+          "0 = unchecked, 1 = checked",
+          "Checkbox becomes unchecked",
+          "User must agree again for next submission"
+        ],
+        code: `agree_var.set(0)`,
+        example: "Checkbox: ☑ → ☐ (unchecked)"
+      },
+      {
+        title: "Step 7: Reset Field Colors",
+        description: "Remove any error highlighting",
+        details: [
+          ".config(bg='white') - Sets background to white",
+          "Removes red error highlighting",
+          "All fields back to normal appearance",
+          "Clears visual error indicators"
+        ],
+        code: `entry_name.config(bg="white")
+entry_email.config(bg="white")
+entry_phone.config(bg="white")`,
+        example: "All red highlighted fields → white (normal)"
+      },
+      {
+        title: "Step 8: Form Cleared Successfully",
+        description: "Form ready for new registration",
+        details: [
+          "All fields empty",
+          "All selections reset to defaults",
+          "No error highlighting",
+          "Form in pristine state",
+          "Ready for next user input"
+        ],
+        code: `# Clear complete!
+# Form reset to initial state
+# Ready for new registration`,
+        example: "✓ Form completely cleared\n✓ Ready for new registration"
+      }
+    ]
+  }
+];
+
+const root = document.getElementById('phases-root');
+
+function createPhaseElement(phaseObj, pIndex) {
+  const phase = document.createElement('div');
+  phase.className = 'phase';
+  
+  const header = document.createElement('div');
+  header.className = 'phase-header ' + phaseObj.phaseClass;
+  
+  const icon = document.createElement('div');
+  icon.style.cssText = 'width:36px;height:36px;display:grid;place-items:center;border-radius:8px;background:rgba(255,255,255,0.06);color:white;font-weight:700';
+  icon.textContent = '▶';
+  
+  const h2 = document.createElement('h2');
+  h2.textContent = phaseObj.phase;
+  
+  header.appendChild(icon);
+  header.appendChild(h2);
+  phase.appendChild(header);
+
+  const body = document.createElement('div');
+  body.className = 'phase-body';
+
+  phaseObj.steps.forEach((stepObj, sIndex) => {
+    const stepWrap = document.createElement('div');
+    stepWrap.className = 'step';
+    
+    const btn = document.createElement('button');
+    btn.className = 'step-button';
+    btn.type = 'button';
+
+    const iconDot = document.createElement('div');
+    iconDot.className = 'icon';
+    iconDot.textContent = String(sIndex + 1);
+    
+    const content = document.createElement('div');
+    content.className = 'step-content';
+    
+    const t = document.createElement('h3');
+    t.className = 'step-title';
+    t.textContent = stepObj.title;
+    
+    const d = document.createElement('p');
+    d.className = 'step-desc';
+    d.textContent = stepObj.description;
+
+    const chev = document.createElement('div');
+    chev.className = 'chev';
+    chev.innerHTML = '›';
+
+    content.appendChild(t);
+    content.appendChild(d);
+    btn.appendChild(iconDot);
+    btn.appendChild(content);
+    btn.appendChild(chev);
+    stepWrap.appendChild(btn);
+
+    const details = document.createElement('div');
+    details.className = 'details';
+    details.style.display = 'none';
+    
+    const detBlock = document.createElement('div');
+    detBlock.className = 'block';
+    const detTitle = document.createElement('h4');
+    detTitle.textContent = '📋 Detailed Steps:';
+    detBlock.appendChild(detTitle);
+    const ul = document.createElement('ul');
+    ul.className = 'list';
+    stepObj.details.forEach(it => {
+      const li = document.createElement('li');
+      li.textContent = it;
+      ul.appendChild(li);
+    });
+    detBlock.appendChild(ul);
+    details.appendChild(detBlock);
+
+    const codeBlock = document.createElement('div');
+    codeBlock.className = 'block';
+    const codeTitle = document.createElement('h4');
+    codeTitle.textContent = '💻 Python Code:';
+    const pre = document.createElement('pre');
+    pre.className = 'code';
+    pre.textContent = stepObj.code;
+    codeBlock.appendChild(codeTitle);
+    codeBlock.appendChild(pre);
+    details.appendChild(codeBlock);
+
+    const exBlock = document.createElement('div');
+    exBlock.className = 'block';
+    const exTitle = document.createElement('h4');
+    exTitle.textContent = '✨ Example:';
+    const ex = document.createElement('div');
+    ex.className = 'example';
+    ex.textContent = stepObj.example;
+    exBlock.appendChild(exTitle);
+    exBlock.appendChild(ex);
+    details.appendChild(exBlock);
+
+    btn.addEventListener('click', () => {
+      const allButtons = document.querySelectorAll('.step-button');
+      allButtons.forEach(b => b.classList.remove('current'));
+      const allChevs = document.querySelectorAll('.chev');
+      allChevs.forEach(c => c.classList.remove('rotate'));
+      btn.classList.add('current');
+      chev.classList.add('rotate');
+      
+      if (!btn.classList.contains('completed')) {
+        btn.classList.add('completed');
+        iconDot.classList.add('completed');
+      }
+      
+      const visible = details.style.display === 'block';
+      document.querySelectorAll('.details').forEach(el => el.style.display = 'none');
+      if (!visible) details.style.display = 'block';
+      else details.style.display = 'none';
+      
+      setTimeout(() => {
+        details.scrollIntoView({behavior: 'smooth', block: 'center'});
+      }, 120);
+    });
+
+    stepWrap.appendChild(details);
+
+    if (sIndex < phaseObj.steps.length - 1) {
+      const conn = document.createElement('div');
+      conn.className = 'connector';
+      const line = document.createElement('div');
+      line.className = 'line';
+      conn.appendChild(line);
+      stepWrap.appendChild(conn);
+    }
+
+    body.appendChild(stepWrap);
+  });
+
+  phase.appendChild(body);
+
+  if (pIndex < algorithm.length - 1) {
+    const outer = document.createElement('div');
+    outer.style.cssText = 'display:flex;justify-content:center;margin:14px 0';
+    const col = document.createElement('div');
+    col.style.cssText = 'display:flex;flex-direction:column;align-items:center';
+    const line = document.createElement('div');
+    line.style.cssText = 'width:2px;height:44px;background:#ddd6fe;border-radius:2px';
+    const arrow = document.createElement('div');
+    arrow.style.cssText = 'transform:rotate(90deg);margin-top:8px;color:#c026d3';
+    arrow.innerHTML = '&#8250;';
+    col.appendChild(line);
+    col.appendChild(arrow);
+    outer.appendChild(col);
+    phase.appendChild(outer);
+  }
+
+  return phase;
+}
+
+(function init() {
+  algorithm.forEach((ph, idx) => {
+    const el = createPhaseElement(ph, idx);
+    root.appendChild(el);
+  });
+})();
+
+const copyBtn = document.getElementById('copyBtn');
+const toggleBtn = document.getElementById('toggleBtn');
+const javaBlock = document.getElementById('javaBlock');
+const javaCode = document.getElementById('javaCode').innerText;
+
+copyBtn.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(javaCode);
+    copyBtn.textContent = 'Copied ✓';
+    setTimeout(() => copyBtn.textContent = 'Copy code', 1600);
+  } catch (e) {
+    copyBtn.textContent = 'Copy failed';
+    setTimeout(() => copyBtn.textContent = 'Copy code', 1600);
+  }
+});
+
+toggleBtn.addEventListener('click', () => {
+  if (javaBlock.style.display === 'none') {
+    javaBlock.style.display = 'block';
+    toggleBtn.textContent = 'Hide';
+  } else {
+    javaBlock.style.display = 'none';
+    toggleBtn.textContent = 'Show';
+  }
+});
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LP1 Practicals - Algorithm Hub</title>
+    <title>LP1 Practicals - Interactive Algorithm Hub</title>
     <style>
         * {
             margin: 0;
@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
@@ -27,39 +27,97 @@
         .header {
             text-align: center;
             color: white;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
             animation: fadeInDown 0.6s ease;
         }
 
         .header h1 {
-            font-size: 42px;
+            font-size: 48px;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             text-shadow: 0 2px 20px rgba(0,0,0,0.2);
+            letter-spacing: -0.5px;
         }
 
         .header p {
-            font-size: 18px;
+            font-size: 20px;
             opacity: 0.95;
             font-weight: 400;
+            margin-bottom: 8px;
         }
 
         .subtitle {
-            font-size: 14px;
+            font-size: 15px;
             opacity: 0.85;
             margin-top: 8px;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 12px 24px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Category Sections */
+        .category-section {
+            margin-bottom: 40px;
+        }
+
+        .category-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 16px 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .category-icon {
+            font-size: 32px;
+        }
+
+        .category-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .category-count {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
         }
 
         /* Cards Grid */
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
             gap: 24px;
             margin-bottom: 30px;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.97);
             backdrop-filter: blur(10px);
             border-radius: 16px;
             padding: 28px;
@@ -89,75 +147,66 @@
         }
 
         .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
-        }
-
-        .card.disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .card.disabled:hover {
-            transform: none;
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
         }
 
         .card-icon {
-            width: 56px;
-            height: 56px;
+            width: 64px;
+            height: 64px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            font-size: 32px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
         }
 
         .card-title {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
             color: #1e293b;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            line-height: 1.3;
         }
 
         .card-description {
             font-size: 14px;
             color: #64748b;
             line-height: 1.6;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
         }
 
         .card-meta {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
         .tag {
             background: #f1f5f9;
             color: #475569;
-            padding: 4px 12px;
+            padding: 5px 12px;
             border-radius: 6px;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
         }
 
-        .tag.new {
+        .tag.steps {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .tag.interactive {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
         }
 
         /* Viewer Section */
         .viewer-section {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.97);
             backdrop-filter: blur(10px);
             border-radius: 16px;
             padding: 16px;
@@ -165,6 +214,7 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             display: none;
             animation: fadeIn 0.4s ease;
+            margin-top: 30px;
         }
 
         .viewer-section.active {
@@ -176,42 +226,83 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 16px;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 2px solid #e2e8f0;
             margin-bottom: 16px;
         }
 
         .viewer-title {
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 20px;
+            font-weight: 700;
             color: #1e293b;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .close-btn {
-            background: #ef4444;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
+            padding: 10px 20px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
         .close-btn:hover {
-            background: #dc2626;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
             transform: scale(1.05);
         }
 
         iframe {
             width: 100%;
-            height: 80vh;
+            height: 85vh;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Loading indicator */
+        .loading {
+            text-align: center;
+            padding: 60px 40px;
+            color: #64748b;
+        }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .creator-credit {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            animation: fadeInUp 1s ease;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+        }
+
+        .creator-name {
+            font-weight: 700;
+            font-size: 18px;
+            background: linear-gradient(135deg, #10b981, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         /* Animations */
@@ -246,41 +337,6 @@
             }
         }
 
-        /* Loading indicator */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #64748b;
-        }
-
-        .spinner {
-            border: 3px solid #f3f4f6;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 16px;
-        }
-
-        .creator-credit {
-    text-align: center;
-    margin-top: 40px;
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.9);
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    animation: fadeInUp 1s ease;
-}
-
-.creator-name {
-    font-weight: 700;
-    background: linear-gradient(135deg, #10b981, #3b82f6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -289,7 +345,7 @@
         /* Responsive */
         @media (max-width: 768px) {
             .header h1 {
-                font-size: 32px;
+                font-size: 36px;
             }
 
             .cards-grid {
@@ -297,7 +353,16 @@
             }
 
             iframe {
-                height: 60vh;
+                height: 70vh;
+            }
+
+            .stats-bar {
+                gap: 15px;
+            }
+
+            .stat-item {
+                font-size: 13px;
+                padding: 10px 18px;
             }
         }
     </style>
@@ -306,111 +371,154 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>🎓 LP1 Practicals</h1>
-            <p>Master System Programming & Compiler Construction</p>
-            <p class="subtitle">Interactive algorithms, pseudocodes & step-by-step explanations</p>
+            <h1>🎓 LP1 Practicals Hub</h1>
+            <p>Interactive Algorithms & Step-by-Step Flowcharts</p>
+            <p class="subtitle">Master System Programming, OS Concepts & Python GUI</p>
+            
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span>📚</span>
+                    <span>7 Practicals</span>
+                </div>
+                <div class="stat-item">
+                    <span>✨</span>
+                    <span>Interactive Learning</span>
+                </div>
+                <div class="stat-item">
+                    <span>🎯</span>
+                    <span>Viva Ready</span>
+                </div>
+            </div>
         </div>
 
-        <!-- Cards Grid -->
-        <div class="cards-grid" id="cardsGrid">
-            <!-- Assembler Pass 1 -->
-            <div class="card" onclick="loadPractical('pass1_ass.html', 'Pass One - Assembler', '📝')">
-                <div class="card-icon">📝</div>
-                <div class="card-title">Pass One Assembler</div>
-                <div class="card-description">
-                    Build Symbol Table, Literal Table, and generate Intermediate Code. Learn the complete first pass algorithm step-by-step.
+        <!-- Assembler Category -->
+        <div class="category-section">
+            <div class="category-header">
+                <span class="category-icon">📝</span>
+                <span class="category-title">Assembler Design</span>
+                <span class="category-count">2 Practicals</span>
+            </div>
+            <div class="cards-grid">
+                <div class="card" onclick="loadPractical('pass1_ass.html', 'Pass One - Assembler', '📝')">
+                    <div class="card-icon">📝</div>
+                    <div class="card-title">Pass One Assembler</div>
+                    <div class="card-description">
+                        Build Symbol Table, Literal Table, and generate Intermediate Code. Complete first pass algorithm with detailed explanations.
+                    </div>
+                    <div class="card-meta">
+                        <span class="tag">Assembler</span>
+                        <span class="tag steps">16 Steps</span>
+                        <span class="tag interactive">Interactive</span>
+                    </div>
                 </div>
-                <div class="card-meta">
-                    <span class="tag">Assembler</span>
-                    <span class="tag">16 Steps</span>
-                    <span class="tag">Interactive</span>
+
+                <div class="card" onclick="loadPractical('pass2_ass.html', 'Pass Two - Assembler', '⚙️')">
+                    <div class="card-icon">⚙️</div>
+                    <div class="card-title">Pass Two Assembler</div>
+                    <div class="card-description">
+                        Generate Machine Code from Intermediate Code. Learn address resolution and final code generation process.
+                    </div>
+                    <div class="card-meta">
+                        <span class="tag">Assembler</span>
+                        <span class="tag steps">17 Steps</span>
+                        <span class="tag interactive">Interactive</span>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Assembler Pass 2 -->
-            <div class="card" onclick="loadPractical('pass2_ass.html', 'Pass Two - Assembler', '⚙️')">
-                <div class="card-icon">⚙️</div>
-                <div class="card-title">Pass Two Assembler</div>
-                <div class="card-description">
-                    Generate Machine Code from Intermediate Code. Understand address resolution and final code generation.
+        <!-- Macro Processor Category -->
+        <div class="category-section">
+            <div class="category-header">
+                <span class="category-icon">🔄</span>
+                <span class="category-title">Macro Processor</span>
+                <span class="category-count">2 Practicals</span>
+            </div>
+            <div class="cards-grid">
+                <div class="card" onclick="loadPractical('pass1_macro.html', 'Pass One - Macro Processor', '🔄')">
+                    <div class="card-icon">🔄</div>
+                    <div class="card-title">Pass One Macro</div>
+                    <div class="card-description">
+                        Build MNT, MDT, and PNTAB tables. Handle macro definitions with positional and keyword parameters.
+                    </div>
+                    <div class="card-meta">
+                        <span class="tag">Macro</span>
+                        <span class="tag steps">18 Steps</span>
+                        <span class="tag interactive">Interactive</span>
+                    </div>
                 </div>
-                <div class="card-meta">
-                    <span class="tag">Assembler</span>
-                    <span class="tag">17 Steps</span>
-                    <span class="tag">Interactive</span>
+
+                <div class="card" onclick="loadPractical('pass2_macro.html', 'Pass Two - Macro Processor', '🔧')">
+                    <div class="card-icon">🔧</div>
+                    <div class="card-title">Pass Two Macro</div>
+                    <div class="card-description">
+                        Expand macro calls using APTAB. Handle parameter substitution and generate final expanded code.
+                    </div>
+                    <div class="card-meta">
+                        <span class="tag">Macro</span>
+                        <span class="tag steps">22 Steps</span>
+                        <span class="tag interactive">Interactive</span>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Macro Pass 1 - NEW! -->
-            <div class="card" onclick="loadPractical('pass1_macro.html', 'Pass One - Macro Processor', '🔄')">
-                <div class="card-icon">🔄</div>
-                <div class="card-title">Pass One Macro</div>
-                <div class="card-description">
-                    Build Macro Name Table (MNT), Macro Definition Table (MDT), and handle macro definitions with parameters.
+        <!-- Operating System Category -->
+        <div class="category-section">
+            <div class="category-header">
+                <span class="category-icon">💾</span>
+                <span class="category-title">Operating System Concepts</span>
+                <span class="category-count">2 Practicals</span>
+            </div>
+            <div class="cards-grid">
+                <div class="card" onclick="loadPractical('memory_placement.html', 'Memory Placement Algorithms', '💾')">
+                    <div class="card-icon">💾</div>
+                    <div class="card-title">Memory Placement</div>
+                    <div class="card-description">
+                        Master First Fit, Next Fit, Best Fit, and Worst Fit allocation strategies with step-by-step visualization.
+                    </div>
+                    <div class="card-meta">
+                        <span class="tag">Memory Management</span>
+                        <span class="tag steps">4 Algorithms</span>
+                        <span class="tag interactive">Interactive</span>
+                    </div>
                 </div>
-                <div class="card-meta">
-                    <span class="tag new">NEW</span>
-                    <span class="tag">Macro Processor</span>
-                    <span class="tag">18 Steps</span>
+
+                <div class="card" onclick="loadPractical('producer_consumer.html', 'Producer-Consumer Problem', '🧵')">
+                    <div class="card-icon">🧵</div>
+                    <div class="card-title">Mutex & Semaphores</div>
+                    <div class="card-description">
+                        Understand thread synchronization with Producer-Consumer problem using mutex and semaphore primitives.
+                    </div>
+                    <div class="card-meta">
+                        <span class="tag">Synchronization</span>
+                        <span class="tag steps">27 Steps</span>
+                        <span class="tag interactive">Interactive</span>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Macro Pass 2 - NEW! -->
-            <div class="card" onclick="loadPractical('pass2_macro.html', 'Pass Two - Macro Processor', '🔧')">
-                <div class="card-icon">🔧</div>
-                <div class="card-title">Pass Two Macro</div>
-                <div class="card-description">
-                    Expand macro calls using APTAB, handle positional & keyword parameters, and generate final expanded code.
-                </div>
-                <div class="card-meta">
-                    <span class="tag new">NEW</span>
-                    <span class="tag">Macro Processor</span>
-                    <span class="tag">22 Steps</span>
-                </div>
+        <!-- Python GUI Category -->
+        <div class="category-section">
+            <div class="category-header">
+                <span class="category-icon">🐍</span>
+                <span class="category-title">Python GUI Programming</span>
+                <span class="category-count">1 Practical</span>
             </div>
-
-            <!-- Coming Soon Placeholders -->
-            <div class="card disabled">
-                <div class="card-icon">🔗</div>
-                <div class="card-title">Linker & Loader</div>
-                <div class="card-description">
-                    Coming soon! Understand linking, loading, and program relocation.
-                </div>
-                <div class="card-meta">
-                    <span class="tag">Coming Soon</span>
-                </div>
-            </div>
-
-            <div class="card disabled">
-                <div class="card-icon">📊</div>
-                <div class="card-title">Scheduling Algorithms</div>
-                <div class="card-description">
-                    Coming soon! Explore CPU scheduling algorithms with visualizations.
-                </div>
-                <div class="card-meta">
-                    <span class="tag">Coming Soon</span>
-                </div>
-            </div>
-
-            <div class="card disabled">
-                <div class="card-icon">💾</div>
-                <div class="card-title">Page Replacement</div>
-                <div class="card-description">
-                    Coming soon! Learn memory management and page replacement strategies.
-                </div>
-                <div class="card-meta">
-                    <span class="tag">Coming Soon</span>
-                </div>
-            </div>
-
-            <div class="card disabled">
-                <div class="card-icon">🧵</div>
-                <div class="card-title">Mutex & Semaphores</div>
-                <div class="card-description">
-                    Coming soon! Master synchronization primitives and concurrent programming.
-                </div>
-                <div class="card-meta">
-                    <span class="tag">Coming Soon</span>
+            <div class="cards-grid">
+                <div class="card" onclick="loadPractical('tkinter_form.html', 'Event Registration Form', '📋')">
+                    <div class="card-icon">📋</div>
+                    <div class="card-title">Tkinter Registration Form</div>
+                    <div class="card-description">
+                        Build a complete event registration form with validation, error handling, and confirmation popup using Python Tkinter.
+                    </div>
+                    <div class="card-meta">
+                        <span class="tag">Python</span>
+                        <span class="tag">Tkinter</span>
+                        <span class="tag steps">29 Steps</span>
+                        <span class="tag interactive">Interactive</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -430,10 +538,10 @@
             </div>
             <iframe id="practicalViewer" style="display: none;" onload="hideLoading()"></iframe>
         </div>
+
         <div class="creator-credit">
-          Crafted with ❤️ by <span class="creator-name">Riddhi Lahare</span>
-      </div>
-      
+            Crafted with ❤️ by <span class="creator-name">Riddhi Lahare</span>
+        </div>
     </div>
 
     <script>
@@ -444,21 +552,14 @@
             const loading = document.getElementById('loadingIndicator');
             const icon = document.getElementById('viewerIcon');
             
-            // Show viewer section
             viewerSection.classList.add('active');
-            
-            // Show loading
             loading.style.display = 'block';
             iframe.style.display = 'none';
             
-            // Set title and icon
             titleText.textContent = title;
             icon.textContent = iconEmoji;
-            
-            // Load file
             iframe.src = filename;
             
-            // Smooth scroll to viewer
             setTimeout(() => {
                 viewerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 100);
@@ -473,16 +574,13 @@
             const viewerSection = document.getElementById('viewerSection');
             viewerSection.classList.remove('active');
             document.getElementById('practicalViewer').src = '';
-            
-            // Scroll back to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Add staggered animation to cards
         document.addEventListener('DOMContentLoaded', () => {
             const cards = document.querySelectorAll('.card');
             cards.forEach((card, index) => {
-                card.style.animationDelay = `${index * 0.1}s`;
+                card.style.animationDelay = `${index * 0.08}s`;
             });
         });
     </script>

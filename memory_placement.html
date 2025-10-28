@@ -1,0 +1,1230 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Memory Placement Algorithms — Interactive Flowchart</title>
+  <style>
+    :root{
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --accent1: #c026d3;
+      --accent2: #0891b2;
+      --muted: #6b7280;
+      --success: #16a34a;
+      --firstfit: #f59e0b;
+      --nextfit: #3b82f6;
+      --bestfit: #10b981;
+      --worstfit: #ef4444;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#fae8ff 0%, #e0f2fe 100%);
+      color:#0f172a;
+      -webkit-font-smoothing:antialiased;
+      padding:28px;
+    }
+
+    .container{max-width:1200px;margin:0 auto;}
+
+    .header{text-align:center;margin-bottom:18px}
+    .title{font-size:32px;font-weight:700;color:#0f172a;margin:0}
+    .subtitle{color:var(--accent1);margin-top:6px;font-weight:600}
+    .hint{color:var(--muted);font-size:13px;margin-top:8px}
+
+    .notice{
+      background:#fff7ed;border-left:6px solid #f59e0b;padding:12px;border-radius:8px;margin:20px 0;color:#92400e;
+    }
+
+    .algo-cards{
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:20px 0;
+    }
+    .algo-card{
+      background:white;border-radius:10px;padding:16px;box-shadow:0 4px 12px rgba(0,0,0,0.04);
+      border-left:4px solid;cursor:pointer;transition:all .2s ease;
+    }
+    .algo-card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,0.08)}
+    .algo-card.firstfit{border-color:var(--firstfit)}
+    .algo-card.nextfit{border-color:var(--nextfit)}
+    .algo-card.bestfit{border-color:var(--bestfit)}
+    .algo-card.worstfit{border-color:var(--worstfit)}
+    .algo-card h3{margin:0 0 8px 0;font-size:16px;color:#0f172a}
+    .algo-card p{margin:0;font-size:13px;color:var(--muted);line-height:1.5}
+
+    .phase{
+      margin-bottom:22px;border-radius:10px;overflow:hidden;
+      box-shadow:0 8px 24px rgba(2,6,23,0.06);
+    }
+    .phase-header{
+      padding:14px 16px;display:flex;align-items:center;gap:12px;
+      color:white;
+    }
+    .phase-header.init-phase{background:linear-gradient(90deg,#6366f1,#8b5cf6)}
+    .phase-header.firstfit-phase{background:linear-gradient(90deg,#f59e0b,#ef4444)}
+    .phase-header.nextfit-phase{background:linear-gradient(90deg,#3b82f6,#8b5cf6)}
+    .phase-header.bestfit-phase{background:linear-gradient(90deg,#10b981,#06b6d4)}
+    .phase-header.worstfit-phase{background:linear-gradient(90deg,#ef4444,#f43f5e)}
+    .phase-header h2{margin:0;font-size:18px}
+    .phase-body{background:var(--card);padding:18px;border-top:1px solid #fae8ff}
+
+    .step{margin-bottom:14px}
+    .step-button{
+      width:100%;display:flex;align-items:flex-start;gap:12px;
+      background:#f8fafc;border:1px solid #e6edf6;padding:12px;border-radius:10px;
+      cursor:pointer;transition:all .18s ease;
+    }
+    .step-button:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(16,24,40,0.06)}
+    .step-button.current{border-color:#c026d3;background:#fae8ff;box-shadow:0 10px 30px rgba(192,38,211,0.08)}
+    .step-button.completed{border-color:#bbf7d0;background:#f0fdf4}
+
+    .icon{
+      margin-top:4px;width:22px;height:22px;border-radius:999px;
+      display:grid;place-items:center;background:#fff;border:1px solid #e6edf6;
+      color:#9ca3af;font-weight:700;font-size:12px;
+    }
+    .icon.completed{background:#ecfdf5;color:var(--success);border-color:#bbf7d0}
+    .step-content{flex:1}
+    .step-title{font-size:15px;font-weight:700;margin:0 0 4px 0;color:#0f172a}
+    .step-desc{margin:0;font-size:13px;color:var(--muted)}
+
+    .chev{width:22px;height:22px;color:#9ca3af;transition:transform .18s ease;flex-shrink:0}
+    .chev.rotate{transform:rotate(90deg)}
+
+    .details{
+      margin-left:46px;margin-top:12px;padding:14px;border-radius:10px;
+      background:#f8fbff;border:1px solid #e6f0ff;animation:fadeIn .12s ease;
+    }
+    .block{margin-bottom:12px}
+    .block h4{margin:0 0 8px 0;font-size:14px;color:#0f172a}
+    .list{padding-left:18px;margin:0;color:#0f172a}
+    .list li{margin-bottom:6px;font-size:13px;color:#083344}
+    pre.code{
+      background:#0f172a;color:#b7f5d0;padding:12px;border-radius:8px;
+      overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    }
+    .example{
+      background:#faf5ff;border:1px solid #f3e8ff;padding:10px;border-radius:8px;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:#221e3b
+    }
+
+    .connector{display:flex;justify-content:center;margin:14px 0}
+    .connector .line{width:2px;height:44px;background:#ddd6fe;border-radius:2px}
+
+    .howto{background:linear-gradient(90deg,#c026d3,#06b6d4);color:white;padding:16px;border-radius:10px;margin-top:18px}
+    .howto p{margin:6px 0;font-size:14px}
+
+    .code-panel{
+      margin-top:18px;padding:12px;border-radius:8px;background:#111827;
+      color:#f8fafc;border:1px solid rgba(255,255,255,0.04);
+    }
+    .code-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .small-btn{background:rgba(255,255,255,0.06);border:none;color:white;padding:8px 10px;border-radius:8px;cursor:pointer}
+
+    .tab-container{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+    .tab{padding:10px 16px;border-radius:8px;cursor:pointer;background:#f1f5f9;border:2px solid transparent;font-weight:600;transition:all .2s}
+    .tab:hover{background:#e2e8f0}
+    .tab.active{border-color:#c026d3;background:#fae8ff;color:#c026d3}
+
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none}}
+
+    @media (max-width:720px){
+      .phase-header h2{font-size:16px}
+      .title{font-size:22px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">Memory Placement Algorithms</h1>
+      <div class="subtitle">First Fit • Next Fit • Best Fit • Worst Fit</div>
+      <div class="hint">Click algorithm cards below to view step-by-step flowcharts</div>
+    </div>
+
+    <div class="notice">
+      <div style="font-weight:600">🎯 Problem:</div>
+      <div style="font-size:13px;margin-top:6px;color:#7a4f1a">
+        Allocate processes to memory blocks efficiently. Different strategies have different trade-offs between speed and fragmentation.
+      </div>
+    </div>
+
+    <div class="tab-container">
+      <div class="tab active" data-algo="init">📋 Overview</div>
+      <div class="tab" data-algo="firstfit">🔶 First Fit</div>
+      <div class="tab" data-algo="nextfit">🔷 Next Fit</div>
+      <div class="tab" data-algo="bestfit">🟢 Best Fit</div>
+      <div class="tab" data-algo="worstfit">🔴 Worst Fit</div>
+    </div>
+
+    <div id="phases-root"></div>
+
+    <div class="howto">
+      <h3 style="margin:0 0 8px 0">🎓 Quick Comparison for Viva</h3>
+      <p><strong>First Fit:</strong> Fastest. Allocates to first suitable block. Simple but causes fragmentation.</p>
+      <p><strong>Next Fit:</strong> Like First Fit but continues from last position. Spreads fragmentation evenly.</p>
+      <p><strong>Best Fit:</strong> Finds smallest suitable block. Minimizes wasted space but slower.</p>
+      <p><strong>Worst Fit:</strong> Uses largest block. Leaves bigger holes but can cause more fragmentation.</p>
+    </div>
+
+    <div class="code-panel">
+      <div class="code-header">
+        <div style="display:flex;align-items:center;gap:12px">
+          <strong>MemoryPlacement.java</strong>
+          <span style="opacity:0.8;font-size:13px">(Complete Implementation)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button id="copyBtn" class="small-btn">Copy code</button>
+          <button id="toggleBtn" class="small-btn">Hide</button>
+        </div>
+      </div>
+
+      <div id="javaBlock" style="margin-top:10px;max-height:420px;overflow:auto">
+        <pre id="javaCode" style="white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px">
+import java.util.*;
+
+class MemoryPlacement {
+    public static void firstFit (int[] blockArr, int[] processArr, int m, int n) {
+        int[] allocatedArr = new int[n];
+        for (int i = 0; i < n; i++) {
+            allocatedArr[i] = -1;
+        }
+
+        System.out.println("\\n\\nFirst Fit Allocation:");
+        System.out.println("\\n-----------------------------------------------------------------------------------");
+        System.out.printf("%-10s %-15s %-20s %-100s\\n", "Process", "Process Size", "Block Allocated", "Block Array");
+        System.out.println("-----------------------------------------------------------------------------------");
+
+        int[] blocks = blockArr.clone();
+        for (int i = 0; i < n; i++) {
+            boolean alloc = false;
+            System.out.printf("%-10s %-15s", (i+1), processArr[i]);
+            for (int j = 0; j < m; j++) {
+                if (blocks[j] >= processArr[i]) {
+                    allocatedArr[i] = j;
+                    blocks[j] -= processArr[i];
+                    alloc = true;
+                    System.out.printf("%-20s %-100s\\n", (allocatedArr[i] + 1), Arrays.toString(blocks));
+                    break;
+                }
+            }
+            if (!alloc) {
+                System.out.printf("%-20s %-100s\\n", "Not Allocated", Arrays.toString(blocks));
+            }
+        }
+    }
+    
+    public static void nextFit (int[] blockArr, int[] processArr, int m, int n) {
+        int[] allocatedArr = new int[n];
+        for (int i = 0; i < n; i++) {
+            allocatedArr[i] = -1;
+        }
+
+        System.out.println("\\n\\nNext Fit Allocation:");
+        System.out.println("\\n-----------------------------------------------------------------------------------");
+        System.out.printf("%-10s %-15s %-20s %-100s\\n", "Process", "Process Size", "Block Allocated", "Block Array");
+        System.out.println("-----------------------------------------------------------------------------------");
+
+        int[] blocks = blockArr.clone();
+        int j = 0;
+        for (int i = 0; i < n; i++) {
+            int count = 0;
+            boolean alloc = false;
+            System.out.printf("%-10s %-15s", (i+1), processArr[i]);
+            while (count < m) {
+                if (blocks[j] >= processArr[i]) {
+                    allocatedArr[i] = j;
+                    blocks[j] -= processArr[i];
+                    alloc = true;
+                    System.out.printf("%-20s %-100s\\n", (allocatedArr[i] + 1), Arrays.toString(blocks));
+                    break;
+                }
+                j = (j+1) % m;
+                count++;
+            }
+            if (!alloc) {
+                System.out.printf("%-20s %-100s\\n", "Not Allocated", Arrays.toString(blocks));
+            }
+        }
+    }
+    
+    public static void bestFit (int[] blockArr, int[] processArr, int m, int n) {
+        int[] allocatedArr = new int[n];
+        for (int i = 0; i < n; i++) {
+            allocatedArr[i] = -1;
+        }
+
+        System.out.println("\\n\\nBest Fit Allocation:");
+        System.out.println("\\n-----------------------------------------------------------------------------------");
+        System.out.printf("%-10s %-15s %-20s %-100s\\n", "Process", "Process Size", "Block Allocated", "Block Array");
+        System.out.println("-----------------------------------------------------------------------------------");
+
+        int[] blocks = blockArr.clone();
+        for (int i = 0; i < n; i++) {
+            int bestIndx = -1;
+            System.out.printf("%-10s %-15s", (i+1), processArr[i]);
+            for (int j = 0; j < m; j++) {
+                if (blocks[j] >= processArr[i]) {
+                    if (bestIndx == -1 || blocks[j] < blocks[bestIndx]) {
+                        bestIndx = j;
+                    }
+                }
+            }
+            if (bestIndx != -1) {
+                allocatedArr[i] = bestIndx;
+                blocks[bestIndx] -= processArr[i];
+                System.out.printf("%-20s %-100s\\n", (allocatedArr[i] + 1), Arrays.toString(blocks));
+            } else {
+                System.out.printf("%-20s %-100s\\n", "Not Allocated", Arrays.toString(blocks));
+            }
+        }
+    }
+    
+    public static void worstFit (int[] blockArr, int[] processArr, int m, int n) {
+        int[] allocatedArr = new int[n];
+        for (int i = 0; i < n; i++) {
+            allocatedArr[i] = -1;
+        }
+
+        System.out.println("\\n\\nWorst Fit Allocation:");
+        System.out.println("\\n-----------------------------------------------------------------------------------");
+        System.out.printf("%-10s %-15s %-20s %-100s\\n", "Process", "Process Size", "Block Allocated", "Block Array");
+        System.out.println("-----------------------------------------------------------------------------------");
+
+        int[] blocks = blockArr.clone();
+        for (int i = 0; i < n; i++) {
+            int worstIndx = -1;
+            System.out.printf("%-10s %-15s", (i+1), processArr[i]);
+            for (int j = 0; j < m; j++) {
+                if (blocks[j] >= processArr[i]) {
+                    if (worstIndx == -1 || blocks[j] > blocks[worstIndx]) {
+                        worstIndx = j;
+                    }
+                }
+            }
+            if (worstIndx != -1) {
+                allocatedArr[i] = worstIndx;
+                blocks[worstIndx] -= processArr[i];
+                System.out.printf("%-20s %-100s\\n", (allocatedArr[i] + 1), Arrays.toString(blocks));
+            } else {
+                System.out.printf("%-20s %-100s\\n", "Not Allocated", Arrays.toString(blocks));
+            }
+        }
+    }
+    
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        
+        System.out.print("Enter the total no. of blocks: ");
+        int m = sc.nextInt();
+        int blockArr[] = new int[m];
+        System.out.println("Enter sizes of the blocks: ");
+        for (int i = 0; i < m; i++) {
+            blockArr[i] = sc.nextInt();
+        }
+        
+        System.out.print("Enter the total no. of processes: ");
+        int n = sc.nextInt();
+        int processArr[] = new int[n];
+        System.out.println("Enter sizes of the processes: ");
+        for (int i = 0; i < n; i++) {
+            processArr[i] = sc.nextInt();
+        }
+
+        int choice;
+        boolean flag = true;
+        while (flag) {
+            System.out.println("\\nChoose a memory placement technique:\\n1) First-fit\\n2) Next-fit\\n3) Best-fit\\n4) Worst-fit\\n5) Exit\\n");
+            System.out.print("Choose: ");
+            choice = sc.nextInt();
+
+            if (choice == 1 || choice == 2 || choice == 3 || choice == 4) {
+                System.out.println("\\n-----------------------------------------------------------------------------------");
+                System.out.println("\\tINITIAL BLOCKS: " + Arrays.toString(blockArr));
+                System.out.println("-----------------------------------------------------------------------------------");
+                System.out.println("\\tPROCESSES: " + Arrays.toString(processArr));
+                System.out.println("-----------------------------------------------------------------------------------");
+            }
+
+            switch (choice) {
+                case 1: firstFit(blockArr, processArr, m, n); break;
+                case 2: nextFit(blockArr, processArr, m, n); break;
+                case 3: bestFit(blockArr, processArr, m, n); break;
+                case 4: worstFit(blockArr, processArr, m, n); break;
+                case 5: System.out.println("EXITING...\\n\\n"); flag = false; break;
+                default: System.out.println("Invalid choice\\n");
+            }
+        }
+    }
+}
+        </pre>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+const algorithms = {
+  init: {
+    phase: "INITIALIZATION & INPUT",
+    phaseClass: "init-phase",
+    steps: [
+      {
+        title: "Step 1: Input Number of Memory Blocks",
+        description: "Get total number of memory blocks from user",
+        details: [
+          "Prompt user: 'Enter the total no. of blocks:'",
+          "Read integer value m (number of blocks)",
+          "This defines how many memory partitions exist",
+          "Example: m = 5 means 5 memory blocks available"
+        ],
+        code: `System.out.print("Enter the total no. of blocks: ");
+int m = sc.nextInt();`,
+        example: "User enters: 5\nm = 5 (5 memory blocks)"
+      },
+      {
+        title: "Step 2: Input Block Sizes",
+        description: "Create array and read size of each memory block",
+        details: [
+          "Create blockArr array of size m",
+          "Loop from i = 0 to m-1",
+          "Read size of each block from user",
+          "Store in blockArr[i]",
+          "These represent available memory partition sizes"
+        ],
+        code: `int blockArr[] = new int[m];
+System.out.println("Enter sizes of the blocks: ");
+for (int i = 0; i < m; i++) {
+    blockArr[i] = sc.nextInt();
+}`,
+        example: "User enters: 100 500 200 300 600\nblockArr = [100, 500, 200, 300, 600]"
+      },
+      {
+        title: "Step 3: Input Number of Processes",
+        description: "Get total number of processes to allocate",
+        details: [
+          "Prompt user: 'Enter the total no. of processes:'",
+          "Read integer value n (number of processes)",
+          "This defines how many processes need memory",
+          "Example: n = 4 means 4 processes to allocate"
+        ],
+        code: `System.out.print("Enter the total no. of processes: ");
+int n = sc.nextInt();`,
+        example: "User enters: 4\nn = 4 (4 processes need allocation)"
+      },
+      {
+        title: "Step 4: Input Process Sizes",
+        description: "Create array and read size of each process",
+        details: [
+          "Create processArr array of size n",
+          "Loop from i = 0 to n-1",
+          "Read memory requirement of each process",
+          "Store in processArr[i]",
+          "These represent how much memory each process needs"
+        ],
+        code: `int processArr[] = new int[n];
+System.out.println("Enter sizes of the processes: ");
+for (int i = 0; i < n; i++) {
+    processArr[i] = sc.nextInt();
+}`,
+        example: "User enters: 212 417 112 426\nprocessArr = [212, 417, 112, 426]"
+      },
+      {
+        title: "Step 5: Display Menu and Get Choice",
+        description: "Show algorithm options and get user selection",
+        details: [
+          "Display menu with 5 options:",
+          "1) First-fit",
+          "2) Next-fit",
+          "3) Best-fit",
+          "4) Worst-fit",
+          "5) Exit",
+          "Read user's choice",
+          "Execute corresponding algorithm"
+        ],
+        code: `System.out.println("\\nChoose a memory placement technique:");
+System.out.println("1) First-fit\\n2) Next-fit");
+System.out.println("3) Best-fit\\n4) Worst-fit\\n5) Exit");
+choice = sc.nextInt();`,
+        example: "User chooses: 1 (First-fit algorithm)"
+      }
+    ]
+  },
+  firstfit: {
+    phase: "FIRST FIT ALGORITHM",
+    phaseClass: "firstfit-phase",
+    steps: [
+      {
+        title: "Step 1: Initialize Allocation Array",
+        description: "Create array to track which block each process gets",
+        details: [
+          "Create allocatedArr of size n (number of processes)",
+          "Initialize all values to -1 (not allocated)",
+          "allocatedArr[i] = block index for process i",
+          "-1 means process not yet allocated"
+        ],
+        code: `int[] allocatedArr = new int[n];
+for (int i = 0; i < n; i++) {
+    allocatedArr[i] = -1;  // Not allocated
+}`,
+        example: "n=4 → allocatedArr = [-1, -1, -1, -1]"
+      },
+      {
+        title: "Step 2: Clone Block Array",
+        description: "Create working copy of blocks to track allocation",
+        details: [
+          "Clone blockArr to blocks array",
+          "This preserves original block sizes",
+          "blocks array will be modified during allocation",
+          "Each allocation reduces available space in block"
+        ],
+        code: `int[] blocks = blockArr.clone();
+// blocks is working copy, blockArr unchanged`,
+        example: "blockArr = [100, 500, 200, 300, 600]\nblocks = [100, 500, 200, 300, 600] (copy)"
+      },
+      {
+        title: "Step 3: Start Process Loop",
+        description: "Begin allocating each process sequentially",
+        details: [
+          "Loop from i = 0 to n-1 (each process)",
+          "Current process size = processArr[i]",
+          "Try to find suitable block for this process",
+          "Use First Fit strategy: first block that fits"
+        ],
+        code: `for (int i = 0; i < n; i++) {
+    int processSize = processArr[i];
+    // Find first suitable block
+}`,
+        example: "i=0: Allocating process 1 (size=212)"
+      },
+      {
+        title: "Step 4: Search for First Suitable Block",
+        description: "Find FIRST block large enough for current process",
+        details: [
+          "Loop through blocks from j = 0 to m-1",
+          "Check if blocks[j] >= processArr[i]",
+          "FIRST FIT: Stop at first block that fits",
+          "Don't search further blocks",
+          "This is fastest but may waste space"
+        ],
+        code: `for (int j = 0; j < m; j++) {
+    if (blocks[j] >= processArr[i]) {
+        // Found first suitable block!
+        break;  // Stop searching
+    }
+}`,
+        example: "Process size=212\nBlock 0=100 (too small)\nBlock 1=500 (✓ FITS!) → Use block 1"
+      },
+      {
+        title: "Step 5: Allocate Process to Block",
+        description: "Assign process to the found block",
+        details: [
+          "If suitable block j found:",
+          "allocatedArr[i] = j (record allocation)",
+          "blocks[j] -= processArr[i] (reduce available space)",
+          "Set alloc = true (successful allocation)",
+          "Break out of search loop"
+        ],
+        code: `if (blocks[j] >= processArr[i]) {
+    allocatedArr[i] = j;
+    blocks[j] -= processArr[i];
+    alloc = true;
+    break;
+}`,
+        example: "Process 1 (212) → Block 1\nBlock 1: 500 - 212 = 288 remaining"
+      },
+      {
+        title: "Step 6: Handle Allocation Failure",
+        description: "If no suitable block found, mark as not allocated",
+        details: [
+          "If search completes without finding block:",
+          "alloc remains false",
+          "allocatedArr[i] stays -1",
+          "Print 'Not Allocated' message",
+          "Process cannot be placed in memory"
+        ],
+        code: `if (!alloc) {
+    // No block large enough
+    System.out.printf("Not Allocated\\n");
+    // allocatedArr[i] = -1
+}`,
+        example: "Process size=700, largest block=600\n→ Not Allocated"
+      },
+      {
+        title: "Step 7: Print Allocation Result",
+        description: "Display allocation details for current process",
+        details: [
+          "Print process number (i+1)",
+          "Print process size (processArr[i])",
+          "Print allocated block (j+1) or 'Not Allocated'",
+          "Print current state of blocks array",
+          "Shows remaining space in each block"
+        ],
+        code: `System.out.printf("%-10s %-15s", (i+1), processArr[i]);
+if (alloc) {
+    System.out.printf("%-20s %-100s\\n", 
+        (allocatedArr[i] + 1), Arrays.toString(blocks));
+} else {
+    System.out.printf("%-20s\\n", "Not Allocated");
+}`,
+        example: "Process: 1  Size: 212  Block: 2  Blocks: [100, 288, 200, 300, 600]"
+      },
+      {
+        title: "Step 8: Continue to Next Process",
+        description: "Check if more processes need allocation",
+        details: [
+          "If i < n-1: Go to Step 3 (next process)",
+          "Increment i to process next item",
+          "Repeat search and allocation",
+          "If i = n-1: All processes handled, go to Step 9"
+        ],
+        code: `// Loop automatically increments i
+if (i < n-1) {
+    continue;  // Next process
+} else {
+    // All processes done
+}`,
+        example: "i=0 done → i=1 (process 2)\ni=1 done → i=2 (process 3)"
+      },
+      {
+        title: "Step 9: First Fit Complete",
+        description: "All processes processed using First Fit",
+        details: [
+          "First Fit allocation complete",
+          "Shows final allocation table",
+          "Fast O(n×m) algorithm",
+          "May cause external fragmentation",
+          "Advantages: Simple and fast",
+          "Disadvantages: Doesn't optimize space usage"
+        ],
+        code: `// All processes allocated or rejected
+// First Fit complete
+System.out.println("First Fit Allocation Complete");`,
+        example: "✓ All 4 processes handled\n3 allocated, 1 not allocated"
+      }
+    ]
+  },
+  nextfit: {
+    phase: "NEXT FIT ALGORITHM",
+    phaseClass: "nextfit-phase",
+    steps: [
+      {
+        title: "Step 1: Initialize Data Structures",
+        description: "Create allocation array and set starting position",
+        details: [
+          "Create allocatedArr of size n",
+          "Initialize all to -1 (not allocated)",
+          "Initialize j = 0 (starting block position)",
+          "j remembers last allocation position",
+          "KEY: Next Fit continues from last position"
+        ],
+        code: `int[] allocatedArr = new int[n];
+for (int i = 0; i < n; i++) {
+    allocatedArr[i] = -1;
+}
+int j = 0;  // Starting position (persists between processes)`,
+        example: "allocatedArr = [-1, -1, -1, -1]\nj = 0 (start from block 0)"
+      },
+      {
+        title: "Step 2: Clone Block Array",
+        description: "Create working copy of memory blocks",
+        details: [
+          "Clone blockArr to blocks",
+          "Preserves original sizes",
+          "blocks modified during allocation",
+          "Each allocation reduces block capacity"
+        ],
+        code: `int[] blocks = blockArr.clone();`,
+        example: "blocks = [100, 500, 200, 300, 600]"
+      },
+      {
+        title: "Step 3: Start Process Loop",
+        description: "Begin allocating each process",
+        details: [
+          "Loop i = 0 to n-1 (each process)",
+          "Initialize count = 0 (blocks checked)",
+          "count prevents infinite loop",
+          "Will check at most m blocks"
+        ],
+        code: `for (int i = 0; i < n; i++) {
+    int count = 0;
+    boolean alloc = false;
+    // Try to allocate process i
+}`,
+        example: "i=0: Allocating process 1 (size=212)\ncount=0, will check max 5 blocks"
+      },
+      {
+        title: "Step 4: Search from Last Position",
+        description: "Find suitable block starting from position j",
+        details: [
+          "Start search from current j position",
+          "Check if blocks[j] >= processArr[i]",
+          "If not suitable: j = (j+1) % m (wrap around)",
+          "Increment count (blocks checked)",
+          "Continue while count < m",
+          "KEY DIFFERENCE: Doesn't restart from 0"
+        ],
+        code: `while (count < m) {
+    if (blocks[j] >= processArr[i]) {
+        // Found suitable block at position j
+        break;
+    }
+    j = (j+1) % m;  // Move to next block (circular)
+    count++;
+}`,
+        example: "j=2, process size=100\nCheck block 2, 3, 4... (continues from j=2)"
+      },
+      {
+        title: "Step 5: Allocate to Found Block",
+        description: "Assign process if suitable block found",
+        details: [
+          "If blocks[j] fits process:",
+          "allocatedArr[i] = j",
+          "blocks[j] -= processArr[i]",
+          "alloc = true",
+          "j remains at this position for NEXT process",
+          "Next search continues from here"
+        ],
+        code: `if (blocks[j] >= processArr[i]) {
+    allocatedArr[i] = j;
+    blocks[j] -= processArr[i];
+    alloc = true;
+    // j stays at current position
+    break;
+}`,
+        example: "Process 1 allocated to block 3\nj=3 (next process starts from block 3)"
+      },
+      {
+        title: "Step 6: Handle No Suitable Block",
+        description: "Process cannot be allocated",
+        details: [
+          "If count reaches m without allocation:",
+          "Checked all blocks from position j",
+          "No block large enough",
+          "alloc remains false",
+          "Print 'Not Allocated'"
+        ],
+        code: `if (!alloc) {
+    System.out.printf("Not Allocated\\n");
+}`,
+        example: "Checked all 5 blocks, none fit\n→ Not Allocated"
+      },
+      {
+        title: "Step 7: Display Result",
+        description: "Print allocation details",
+        details: [
+          "Show process number and size",
+          "Show allocated block or failure",
+          "Display current blocks state",
+          "Shows fragmentation pattern"
+        ],
+        code: `System.out.printf("Process: %d  Size: %d\\n", i+1, processArr[i]);
+if (alloc) {
+    System.out.printf("Block: %d\\n", allocatedArr[i]+1);
+}`,
+        example: "Process: 2  Size: 417  Block: 4"
+      },
+      {
+        title: "Step 8: Continue from Last Position",
+        description: "Next process starts where this one ended",
+        details: [
+          "j maintains its value",
+          "Next iteration starts from current j",
+          "Spreads allocations across memory",
+          "Reduces clustering at beginning",
+          "KEY: Different from First Fit restart"
+        ],
+        code: `// j persists between iterations
+// Next process i+1 will start search from current j`,
+        example: "After allocating at block 3:\nNext search starts from block 3, not block 0"
+      },
+      {
+        title: "Step 9: Next Fit Complete",
+        description: "All processes handled",
+        details: [
+          "Next Fit allocation complete",
+          "Spreads allocations more evenly",
+          "Similar speed to First Fit",
+          "May have less clustering",
+          "But can skip suitable earlier blocks"
+        ],
+        code: `// All processes processed
+System.out.println("Next Fit Complete");`,
+        example: "✓ Allocation done, memory distributed across blocks"
+      }
+    ]
+  },
+  bestfit: {
+    phase: "BEST FIT ALGORITHM",
+    phaseClass: "bestfit-phase",
+    steps: [
+      {
+        title: "Step 1: Initialize Allocation Array",
+        description: "Setup tracking for allocations",
+        details: [
+          "Create allocatedArr of size n",
+          "Initialize all to -1",
+          "Will store best block index for each process"
+        ],
+        code: `int[] allocatedArr = new int[n];
+for (int i = 0; i < n; i++) {
+    allocatedArr[i] = -1;
+}`,
+        example: "allocatedArr = [-1, -1, -1, -1]"
+      },
+      {
+        title: "Step 2: Clone Block Array",
+        description: "Create working copy of blocks",
+        details: [
+          "Clone blockArr to blocks",
+          "Preserves original for comparison",
+          "blocks modified during allocation"
+        ],
+        code: `int[] blocks = blockArr.clone();`,
+        example: "blocks = [100, 500, 200, 300, 600]"
+      },
+      {
+        title: "Step 3: Start Process Loop",
+        description: "Begin processing each process",
+        details: [
+          "Loop i = 0 to n-1",
+          "Initialize bestIndx = -1 (no best yet)",
+          "Will search ALL blocks for best fit"
+        ],
+        code: `for (int i = 0; i < n; i++) {
+    int bestIndx = -1;
+    // Find best fitting block
+}`,
+        example: "i=0: Finding best block for process 1 (size=212)"
+      },
+      {
+        title: "Step 4: Search All Blocks",
+        description: "Find SMALLEST block that fits process",
+        details: [
+          "Loop through ALL blocks j = 0 to m-1",
+          "Check if blocks[j] >= processArr[i]",
+          "KEY: Don't stop at first fit",
+          "Track smallest suitable block",
+          "Minimizes wasted space"
+        ],
+        code: `for (int j = 0; j < m; j++) {
+    if (blocks[j] >= processArr[i]) {
+        // Check if this is better than current best
+    }
+}`,
+        example: "Process size=212\nBlock 1=500, Block 3=300, Block 4=600\nCheck all to find smallest"
+      },
+      {
+        title: "Step 5: Update Best Block",
+        description: "Track smallest suitable block found so far",
+        details: [
+          "If block j fits AND:",
+          "  - bestIndx == -1 (first fit found) OR",
+          "  - blocks[j] < blocks[bestIndx] (smaller than current best)",
+          "Then: bestIndx = j",
+          "Finds tightest fit to minimize waste"
+        ],
+        code: `if (blocks[j] >= processArr[i]) {
+    if (bestIndx == -1 || blocks[j] < blocks[bestIndx]) {
+        bestIndx = j;  // New best fit
+    }
+}`,
+        example: "Process=212\nBlock 1=500, Block 3=300 ✓ (best: smallest that fits)"
+      },
+      {
+        title: "Step 6: Allocate to Best Block",
+        description: "Assign process to best fitting block",
+        details: [
+          "After checking ALL blocks:",
+          "If bestIndx != -1 (found suitable block):",
+          "allocatedArr[i] = bestIndx",
+          "blocks[bestIndx] -= processArr[i]",
+          "Uses block with minimum waste"
+        ],
+        code: `if (bestIndx != -1) {
+    allocatedArr[i] = bestIndx;
+    blocks[bestIndx] -= processArr[i];
+    System.out.printf("Block: %d\\n", bestIndx+1);
+}`,
+        example: "Process 1 (212) → Block 3 (300)\nBlock 3: 300-212=88 remaining (minimal waste)"
+      },
+      {
+        title: "Step 7: Handle No Fit",
+        description: "No block large enough",
+        details: [
+          "If bestIndx == -1:",
+          "No block fits the process",
+          "allocatedArr[i] stays -1",
+          "Print 'Not Allocated'"
+        ],
+        code: `if (bestIndx == -1) {
+    System.out.printf("Not Allocated\\n");
+}`,
+        example: "Process=700, largest block=600\n→ Not Allocated"
+      },
+      {
+        title: "Step 8: Display Allocation",
+        description: "Show allocation result",
+        details: [
+          "Print process details",
+          "Show best block chosen",
+          "Display remaining blocks",
+          "Shows optimized space usage"
+        ],
+        code: `System.out.printf("Process: %d  Size: %d\\n", i+1, processArr[i]);
+System.out.printf("Best Block: %d\\n", bestIndx+1);`,
+        example: "Process: 1  Size: 212  Best Block: 3 (tightest fit)"
+      },
+      {
+        title: "Step 9: Best Fit Complete",
+        description: "All processes allocated optimally",
+        details: [
+          "Best Fit allocation done",
+          "Minimizes wasted space per allocation",
+          "Slower than First/Next Fit (checks all blocks)",
+          "Time complexity: O(n×m)",
+          "Better space utilization",
+          "May cause small unusable fragments"
+        ],
+        code: `System.out.println("Best Fit Complete");
+// Minimum waste per allocation`,
+        example: "✓ All processes fit in smallest suitable blocks"
+      }
+    ]
+  },
+  worstfit: {
+    phase: "WORST FIT ALGORITHM",
+    phaseClass: "worstfit-phase",
+    steps: [
+      {
+        title: "Step 1: Initialize Allocation Array",
+        description: "Setup allocation tracking",
+        details: [
+          "Create allocatedArr of size n",
+          "Initialize all to -1",
+          "Tracks worst block used for each process"
+        ],
+        code: `int[] allocatedArr = new int[n];
+for (int i = 0; i < n; i++) {
+    allocatedArr[i] = -1;
+}`,
+        example: "allocatedArr = [-1, -1, -1, -1]"
+      },
+      {
+        title: "Step 2: Clone Block Array",
+        description: "Create working memory copy",
+        details: [
+          "Clone blockArr to blocks",
+          "Preserves original values",
+          "blocks updated during allocation"
+        ],
+        code: `int[] blocks = blockArr.clone();`,
+        example: "blocks = [100, 500, 200, 300, 600]"
+      },
+      {
+        title: "Step 3: Start Process Loop",
+        description: "Begin processing each process",
+        details: [
+          "Loop i = 0 to n-1",
+          "Initialize worstIndx = -1",
+          "Will find LARGEST suitable block"
+        ],
+        code: `for (int i = 0; i < n; i++) {
+    int worstIndx = -1;
+    // Find largest fitting block
+}`,
+        example: "i=0: Finding largest block for process 1 (size=212)"
+      },
+      {
+        title: "Step 4: Search All Blocks",
+        description: "Find LARGEST block that can fit process",
+        details: [
+          "Loop through ALL blocks j = 0 to m-1",
+          "Check if blocks[j] >= processArr[i]",
+          "Don't stop at first suitable block",
+          "Track largest suitable block found",
+          "Opposite of Best Fit strategy"
+        ],
+        code: `for (int j = 0; j < m; j++) {
+    if (blocks[j] >= processArr[i]) {
+        // Check if largest so far
+    }
+}`,
+        example: "Process size=212\nBlock 1=500, Block 3=300, Block 4=600\nFind LARGEST"
+      },
+      {
+        title: "Step 5: Update Worst (Largest) Block",
+        description: "Track largest suitable block",
+        details: [
+          "If block j fits AND:",
+          "  - worstIndx == -1 (first fit) OR",
+          "  - blocks[j] > blocks[worstIndx] (larger than current worst)",
+          "Then: worstIndx = j",
+          "Uses biggest available space",
+          "Leaves larger remaining fragments"
+        ],
+        code: `if (blocks[j] >= processArr[i]) {
+    if (worstIndx == -1 || blocks[j] > blocks[worstIndx]) {
+        worstIndx = j;  // New worst (largest) fit
+    }
+}`,
+        example: "Process=212\nBlock 1=500, Block 4=600 ✓ (worst: largest available)"
+      },
+      {
+        title: "Step 6: Allocate to Worst Block",
+        description: "Assign process to largest block",
+        details: [
+          "After checking ALL blocks:",
+          "If worstIndx != -1:",
+          "allocatedArr[i] = worstIndx",
+          "blocks[worstIndx] -= processArr[i]",
+          "Leaves biggest possible fragment",
+          "Fragment more likely reusable"
+        ],
+        code: `if (worstIndx != -1) {
+    allocatedArr[i] = worstIndx;
+    blocks[worstIndx] -= processArr[i];
+    System.out.printf("Block: %d\\n", worstIndx+1);
+}`,
+        example: "Process 1 (212) → Block 4 (600)\nBlock 4: 600-212=388 (large fragment remains)"
+      },
+      {
+        title: "Step 7: Handle Allocation Failure",
+        description: "No block fits process",
+        details: [
+          "If worstIndx == -1:",
+          "No block large enough",
+          "Process cannot be allocated",
+          "Print 'Not Allocated'"
+        ],
+        code: `if (worstIndx == -1) {
+    System.out.printf("Not Allocated\\n");
+}`,
+        example: "All blocks too small → Not Allocated"
+      },
+      {
+        title: "Step 8: Display Result",
+        description: "Show allocation details",
+        details: [
+          "Print process information",
+          "Show largest block used",
+          "Display remaining blocks",
+          "Shows larger remaining fragments"
+        ],
+        code: `System.out.printf("Process: %d  Size: %d\\n", i+1, processArr[i]);
+System.out.printf("Worst Block: %d\\n", worstIndx+1);`,
+        example: "Process: 1  Size: 212  Worst Block: 5 (largest)"
+      },
+      {
+        title: "Step 9: Worst Fit Complete",
+        description: "All processes allocated",
+        details: [
+          "Worst Fit allocation complete",
+          "Uses largest available blocks",
+          "Leaves bigger remaining fragments",
+          "Fragments more likely reusable",
+          "Slower: O(n×m) - checks all blocks",
+          "May cause more overall fragmentation",
+          "Trade-off: larger but more fragments"
+        ],
+        code: `System.out.println("Worst Fit Complete");
+// Larger remaining fragments`,
+        example: "✓ Processes in largest blocks, bigger fragments left"
+      }
+    ]
+  }
+};
+
+const root = document.getElementById('phases-root');
+let currentAlgo = 'init';
+
+function createPhaseElement(phaseObj) {
+  const phase = document.createElement('div');
+  phase.className = 'phase';
+  
+  const header = document.createElement('div');
+  header.className = 'phase-header ' + phaseObj.phaseClass;
+  
+  const icon = document.createElement('div');
+  icon.style.cssText = 'width:36px;height:36px;display:grid;place-items:center;border-radius:8px;background:rgba(255,255,255,0.06);color:white;font-weight:700';
+  icon.textContent = '▶';
+  
+  const h2 = document.createElement('h2');
+  h2.textContent = phaseObj.phase;
+  
+  header.appendChild(icon);
+  header.appendChild(h2);
+  phase.appendChild(header);
+
+  const body = document.createElement('div');
+  body.className = 'phase-body';
+
+  phaseObj.steps.forEach((stepObj, sIndex) => {
+    const stepWrap = document.createElement('div');
+    stepWrap.className = 'step';
+    
+    const btn = document.createElement('button');
+    btn.className = 'step-button';
+    btn.type = 'button';
+
+    const iconDot = document.createElement('div');
+    iconDot.className = 'icon';
+    iconDot.textContent = String(sIndex + 1);
+    
+    const content = document.createElement('div');
+    content.className = 'step-content';
+    
+    const t = document.createElement('h3');
+    t.className = 'step-title';
+    t.textContent = stepObj.title;
+    
+    const d = document.createElement('p');
+    d.className = 'step-desc';
+    d.textContent = stepObj.description;
+
+    const chev = document.createElement('div');
+    chev.className = 'chev';
+    chev.innerHTML = '›';
+
+    content.appendChild(t);
+    content.appendChild(d);
+    btn.appendChild(iconDot);
+    btn.appendChild(content);
+    btn.appendChild(chev);
+    stepWrap.appendChild(btn);
+
+    const details = document.createElement('div');
+    details.className = 'details';
+    details.style.display = 'none';
+    
+    const detBlock = document.createElement('div');
+    detBlock.className = 'block';
+    const detTitle = document.createElement('h4');
+    detTitle.textContent = '📋 Detailed Steps:';
+    detBlock.appendChild(detTitle);
+    const ul = document.createElement('ul');
+    ul.className = 'list';
+    stepObj.details.forEach(it => {
+      const li = document.createElement('li');
+      li.textContent = it;
+      ul.appendChild(li);
+    });
+    detBlock.appendChild(ul);
+    details.appendChild(detBlock);
+
+    const codeBlock = document.createElement('div');
+    codeBlock.className = 'block';
+    const codeTitle = document.createElement('h4');
+    codeTitle.textContent = '💻 Pseudocode:';
+    const pre = document.createElement('pre');
+    pre.className = 'code';
+    pre.textContent = stepObj.code;
+    codeBlock.appendChild(codeTitle);
+    codeBlock.appendChild(pre);
+    details.appendChild(codeBlock);
+
+    const exBlock = document.createElement('div');
+    exBlock.className = 'block';
+    const exTitle = document.createElement('h4');
+    exTitle.textContent = '✨ Example:';
+    const ex = document.createElement('div');
+    ex.className = 'example';
+    ex.textContent = stepObj.example;
+    exBlock.appendChild(exTitle);
+    exBlock.appendChild(ex);
+    details.appendChild(exBlock);
+
+    btn.addEventListener('click', () => {
+      const allButtons = document.querySelectorAll('.step-button');
+      allButtons.forEach(b => b.classList.remove('current'));
+      const allChevs = document.querySelectorAll('.chev');
+      allChevs.forEach(c => c.classList.remove('rotate'));
+      btn.classList.add('current');
+      chev.classList.add('rotate');
+      
+      if (!btn.classList.contains('completed')) {
+        btn.classList.add('completed');
+        iconDot.classList.add('completed');
+      }
+      
+      const visible = details.style.display === 'block';
+      document.querySelectorAll('.details').forEach(el => el.style.display = 'none');
+      if (!visible) details.style.display = 'block';
+      else details.style.display = 'none';
+      
+      setTimeout(() => {
+        details.scrollIntoView({behavior: 'smooth', block: 'center'});
+      }, 120);
+    });
+
+    stepWrap.appendChild(details);
+
+    if (sIndex < phaseObj.steps.length - 1) {
+      const conn = document.createElement('div');
+      conn.className = 'connector';
+      const line = document.createElement('div');
+      line.className = 'line';
+      conn.appendChild(line);
+      stepWrap.appendChild(conn);
+    }
+
+    body.appendChild(stepWrap);
+  });
+
+  phase.appendChild(body);
+  return phase;
+}
+
+function renderAlgorithm(algoKey) {
+  root.innerHTML = '';
+  currentAlgo = algoKey;
+  
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.classList.remove('active');
+    if (tab.dataset.algo === algoKey) {
+      tab.classList.add('active');
+    }
+  });
+  
+  const algoData = algorithms[algoKey];
+  const el = createPhaseElement(algoData);
+  root.appendChild(el);
+}
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    renderAlgorithm(tab.dataset.algo);
+  });
+});
+
+renderAlgorithm('init');
+
+const copyBtn = document.getElementById('copyBtn');
+const toggleBtn = document.getElementById('toggleBtn');
+const javaBlock = document.getElementById('javaBlock');
+const javaCode = document.getElementById('javaCode').innerText;
+
+copyBtn.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(javaCode);
+    copyBtn.textContent = 'Copied ✓';
+    setTimeout(() => copyBtn.textContent = 'Copy code', 1600);
+  } catch (e) {
+    copyBtn.textContent = 'Copy failed';
+    setTimeout(() => copyBtn.textContent = 'Copy code', 1600);
+  }
+});
+
+toggleBtn.addEventListener('click', () => {
+  if (javaBlock.style.display === 'none') {
+    javaBlock.style.display = 'block';
+    toggleBtn.textContent = 'Hide';
+  } else {
+    javaBlock.style.display = 'none';
+    toggleBtn.textContent = 'Show';
+  }
+});
+</script>
+</body>
+</html>

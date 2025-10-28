@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Producer-Consumer with Semaphores — Flowchart</title>
+  <style>
+    :root{
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --accent1: #c026d3;
+      --accent2: #0891b2;
+      --muted: #6b7280;
+      --success: #16a34a;
+      --producer: #f59e0b;
+      --consumer: #3b82f6;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#fae8ff 0%, #e0f2fe 100%);
+      color:#0f172a;
+      -webkit-font-smoothing:antialiased;
+      padding:28px;
+    }
+
+    .container{max-width:1200px;margin:0 auto;}
+
+    .header{text-align:center;margin-bottom:18px}
+    .title{font-size:32px;font-weight:700;color:#0f172a;margin:0}
+    .subtitle{color:var(--accent1);margin-top:6px;font-weight:600}
+    .hint{color:var(--muted);font-size:13px;margin-top:8px}
+
+    .notice{
+      background:#fff7ed;border-left:6px solid #f59e0b;padding:12px;border-radius:8px;margin:20px 0;color:#92400e;
+    }
+
+    .concepts{
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin:20px 0;
+    }
+    .concept-card{
+      background:white;border-radius:10px;padding:16px;box-shadow:0 4px 12px rgba(0,0,0,0.04);
+      border-left:4px solid var(--accent2);
+    }
+    .concept-card h3{margin:0 0 8px 0;font-size:16px;color:#0f172a}
+    .concept-card p{margin:0;font-size:13px;color:var(--muted);line-height:1.5}
+
+    .phase{
+      margin-bottom:22px;border-radius:10px;overflow:hidden;
+      box-shadow:0 8px 24px rgba(2,6,23,0.06);
+    }
+    .phase-header{
+      padding:14px 16px;display:flex;align-items:center;gap:12px;
+      color:white;
+    }
+    .phase-header.producer-phase{background:linear-gradient(90deg,#f59e0b,#ef4444)}
+    .phase-header.consumer-phase{background:linear-gradient(90deg,#3b82f6,#8b5cf6)}
+    .phase-header.init-phase{background:linear-gradient(90deg,#10b981,#06b6d4)}
+    .phase-header h2{margin:0;font-size:18px}
+    .phase-body{background:var(--card);padding:18px;border-top:1px solid #fae8ff}
+
+    .step{margin-bottom:14px}
+    .step-button{
+      width:100%;display:flex;align-items:flex-start;gap:12px;
+      background:#f8fafc;border:1px solid #e6edf6;padding:12px;border-radius:10px;
+      cursor:pointer;transition:all .18s ease;
+    }
+    .step-button:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(16,24,40,0.06)}
+    .step-button.current{border-color:#c026d3;background:#fae8ff;box-shadow:0 10px 30px rgba(192,38,211,0.08)}
+    .step-button.completed{border-color:#bbf7d0;background:#f0fdf4}
+
+    .icon{
+      margin-top:4px;width:22px;height:22px;border-radius:999px;
+      display:grid;place-items:center;background:#fff;border:1px solid #e6edf6;
+      color:#9ca3af;font-weight:700;font-size:12px;
+    }
+    .icon.completed{background:#ecfdf5;color:var(--success);border-color:#bbf7d0}
+    .step-content{flex:1}
+    .step-title{font-size:15px;font-weight:700;margin:0 0 4px 0;color:#0f172a}
+    .step-desc{margin:0;font-size:13px;color:var(--muted)}
+
+    .chev{width:22px;height:22px;color:#9ca3af;transition:transform .18s ease;flex-shrink:0}
+    .chev.rotate{transform:rotate(90deg)}
+
+    .details{
+      margin-left:46px;margin-top:12px;padding:14px;border-radius:10px;
+      background:#f8fbff;border:1px solid #e6f0ff;animation:fadeIn .12s ease;
+    }
+    .block{margin-bottom:12px}
+    .block h4{margin:0 0 8px 0;font-size:14px;color:#0f172a}
+    .list{padding-left:18px;margin:0;color:#0f172a}
+    .list li{margin-bottom:6px;font-size:13px;color:#083344}
+    pre.code{
+      background:#0f172a;color:#b7f5d0;padding:12px;border-radius:8px;
+      overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    }
+    .example{
+      background:#faf5ff;border:1px solid #f3e8ff;padding:10px;border-radius:8px;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:#221e3b
+    }
+
+    .connector{display:flex;justify-content:center;margin:14px 0}
+    .connector .line{width:2px;height:44px;background:#ddd6fe;border-radius:2px}
+
+    .howto{background:linear-gradient(90deg,#c026d3,#06b6d4);color:white;padding:16px;border-radius:10px;margin-top:18px}
+    .howto p{margin:6px 0;font-size:14px}
+
+    .code-panel{
+      margin-top:18px;padding:12px;border-radius:8px;background:#111827;
+      color:#f8fafc;border:1px solid rgba(255,255,255,0.04);
+    }
+    .code-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .small-btn{background:rgba(255,255,255,0.06);border:none;color:white;padding:8px 10px;border-radius:8px;cursor:pointer}
+
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none}}
+
+    @media (max-width:720px){
+      .phase-header h2{font-size:16px}
+      .title{font-size:22px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">Producer-Consumer Problem</h1>
+      <div class="subtitle">Using Semaphores for Synchronization</div>
+      <div class="hint">Click steps to understand how Producer and Consumer threads synchronize using semaphores</div>
+    </div>
+
+    <div class="notice">
+      <div style="font-weight:600">🎯 Problem Overview:</div>
+      <div style="font-size:13px;margin-top:6px;color:#7a4f1a">
+        Two threads share a bounded buffer. Producer adds items, Consumer removes them. Semaphores ensure thread-safe access and prevent buffer overflow/underflow.
+      </div>
+    </div>
+
+    <div class="concepts">
+      <div class="concept-card">
+        <h3>🔒 mutex (Semaphore)</h3>
+        <p>Binary semaphore (initial: 1) ensures mutual exclusion. Only one thread can access the buffer at a time.</p>
+      </div>
+      <div class="concept-card">
+        <h3>📭 empty (Semaphore)</h3>
+        <p>Counting semaphore (initial: BUFFER_SIZE=5) tracks empty slots. Producer waits if buffer is full.</p>
+      </div>
+      <div class="concept-card">
+        <h3>📬 full (Semaphore)</h3>
+        <p>Counting semaphore (initial: 0) tracks filled slots. Consumer waits if buffer is empty.</p>
+      </div>
+    </div>
+
+    <div id="phases-root"></div>
+
+    <div class="howto">
+      <h3 style="margin:0 0 8px 0">🎓 How to Use for Viva/Exam</h3>
+      <p><strong>1.</strong> Explain the three semaphores: mutex (mutual exclusion), empty (free slots), full (filled slots)</p>
+      <p><strong>2.</strong> Producer flow: Wait for empty slot → Lock mutex → Add item → Unlock mutex → Signal full</p>
+      <p><strong>3.</strong> Consumer flow: Wait for filled slot → Lock mutex → Remove item → Unlock mutex → Signal empty</p>
+      <p><strong>4.</strong> Key insight: Semaphores prevent race conditions and deadlock by controlling access order</p>
+    </div>
+
+    <div class="code-panel">
+      <div class="code-header">
+        <div style="display:flex;align-items:center;gap:12px">
+          <strong>MutexSemaphore.java</strong>
+          <span style="opacity:0.8;font-size:13px">(Complete Implementation)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button id="copyBtn" class="small-btn">Copy code</button>
+          <button id="toggleBtn" class="small-btn">Hide</button>
+        </div>
+      </div>
+
+      <div id="javaBlock" style="margin-top:10px;max-height:420px;overflow:auto">
+        <pre id="javaCode" style="white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px">
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.Semaphore;
+
+public class MutexSemaphore {
+
+    static final int BUFFER_SIZE = 5;
+    static final int MAX_ITEMS = 10;
+    static Queue<Integer> buffer = new LinkedList<>();
+
+    static Semaphore mutex = new Semaphore(1);
+    static Semaphore empty = new Semaphore(BUFFER_SIZE);
+    static Semaphore full = new Semaphore(0);
+
+    static class Producer extends Thread {
+        public void run() {
+            try {
+                for (int item = 0; item < MAX_ITEMS; item++) {
+                    empty.acquire();
+                    mutex.acquire();
+
+                    buffer.add(item);
+                    System.out.println("Produced: " + item + " | Buffer: " + buffer);
+
+                    mutex.release();
+                    full.release();
+
+                    Thread.sleep(500);
+                }
+                System.out.println("Producer finished producing.");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    static class Consumer extends Thread {
+        public void run() {
+            try {
+                for (int i = 0; i < MAX_ITEMS; i++) {
+                    full.acquire();
+                    mutex.acquire();
+
+                    int item = buffer.remove();
+                    System.out.println("Consumed: " + item + " | Buffer: " + buffer);
+
+                    mutex.release();
+                    empty.release();
+
+                    Thread.sleep(800);
+                }
+                System.out.println("Consumer finished consuming.");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Producer producer = new Producer();
+        Consumer consumer = new Consumer();
+
+        producer.start();
+        consumer.start();
+    }
+}
+        </pre>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+const algorithm = [
+  {
+    phase: "INITIALIZATION",
+    phaseClass: "init-phase",
+    steps: [
+      {
+        title: "Step 1: Initialize Buffer and Constants",
+        description: "Set up shared buffer and configuration",
+        details: [
+          "BUFFER_SIZE = 5 (maximum items buffer can hold)",
+          "MAX_ITEMS = 10 (total items to produce/consume)",
+          "buffer = empty Queue (LinkedList implementation)",
+          "This buffer is shared between Producer and Consumer threads"
+        ],
+        code: `final int BUFFER_SIZE = 5
+final int MAX_ITEMS = 10
+Queue<Integer> buffer = new LinkedList<>()`,
+        example: "Buffer capacity: 5, Will produce/consume: 10 items total"
+      },
+      {
+        title: "Step 2: Initialize Semaphores",
+        description: "Create three semaphores for synchronization",
+        details: [
+          "mutex = Semaphore(1) - Binary semaphore for mutual exclusion",
+          "empty = Semaphore(BUFFER_SIZE=5) - Counts empty slots available",
+          "full = Semaphore(0) - Counts filled slots available",
+          "Semaphores ensure thread-safe buffer access"
+        ],
+        code: `Semaphore mutex = new Semaphore(1)     // Lock for buffer access
+Semaphore empty = new Semaphore(5)     // 5 empty slots initially
+Semaphore full = new Semaphore(0)      // 0 filled slots initially`,
+        example: "mutex=1 (unlocked), empty=5 (buffer empty), full=0 (no items)"
+      },
+      {
+        title: "Step 3: Create Producer Thread",
+        description: "Instantiate Producer thread object",
+        details: [
+          "Producer extends Thread class",
+          "Will produce MAX_ITEMS (10) items",
+          "Each item is an integer (0, 1, 2, ... 9)",
+          "Thread not started yet, just created"
+        ],
+        code: `Producer producer = new Producer()
+// Producer ready but not running yet`,
+        example: "Producer thread object created, waiting to start"
+      },
+      {
+        title: "Step 4: Create Consumer Thread",
+        description: "Instantiate Consumer thread object",
+        details: [
+          "Consumer extends Thread class",
+          "Will consume MAX_ITEMS (10) items",
+          "Removes items from buffer in FIFO order",
+          "Thread not started yet, just created"
+        ],
+        code: `Consumer consumer = new Consumer()
+// Consumer ready but not running yet`,
+        example: "Consumer thread object created, waiting to start"
+      },
+      {
+        title: "Step 5: Start Both Threads",
+        description: "Begin concurrent execution",
+        details: [
+          "producer.start() - Begins Producer thread execution",
+          "consumer.start() - Begins Consumer thread execution",
+          "Both threads now run concurrently",
+          "Semaphores coordinate their access to shared buffer"
+        ],
+        code: `producer.start()   // Producer begins producing
+consumer.start()   // Consumer begins consuming
+// Both threads running concurrently now`,
+        example: "✓ Both threads started, concurrent execution begins!"
+      }
+    ]
+  },
+  {
+    phase: "PRODUCER THREAD LOGIC",
+    phaseClass: "producer-phase",
+    steps: [
+      {
+        title: "Producer Step 1: Start Loop",
+        description: "Begin producing items (0 to MAX_ITEMS-1)",
+        details: [
+          "Loop from item = 0 to item = 9 (MAX_ITEMS = 10)",
+          "Each iteration produces one item",
+          "Total 10 items will be produced",
+          "Loop variable 'item' is also the value produced"
+        ],
+        code: `for (int item = 0; item < MAX_ITEMS; item++) {
+    // Produce item with value = item
+}`,
+        example: "Iteration 1: item=0, Iteration 2: item=1, ... Iteration 10: item=9"
+      },
+      {
+        title: "Producer Step 2: Wait for Empty Slot",
+        description: "Acquire 'empty' semaphore - wait if buffer full",
+        details: [
+          "empty.acquire() - Decrement empty count",
+          "If empty = 0 (buffer full), Producer BLOCKS here",
+          "Waits until Consumer removes an item (releases empty)",
+          "Ensures Producer doesn't overflow the buffer",
+          "After acquire: empty count decreases by 1"
+        ],
+        code: `empty.acquire()
+// Wait if buffer is full (empty=0)
+// After acquire: empty = empty - 1`,
+        example: "If empty=5 → acquire → empty=4\nIf empty=0 → WAIT until Consumer frees a slot"
+      },
+      {
+        title: "Producer Step 3: Acquire Mutex Lock",
+        description: "Get exclusive access to buffer",
+        details: [
+          "mutex.acquire() - Lock the buffer",
+          "If mutex = 0 (locked by Consumer), Producer BLOCKS",
+          "Ensures only one thread accesses buffer at a time",
+          "Critical section protection begins",
+          "After acquire: mutex = 0 (locked)"
+        ],
+        code: `mutex.acquire()
+// Lock buffer for exclusive access
+// If already locked, WAIT
+// After acquire: mutex = 0`,
+        example: "If mutex=1 → acquire → mutex=0 (locked)\nIf mutex=0 → WAIT until released"
+      },
+      {
+        title: "Producer Step 4: Add Item to Buffer",
+        description: "Produce item - add to shared buffer (CRITICAL SECTION)",
+        details: [
+          "buffer.add(item) - Insert item at end of queue",
+          "This is the CRITICAL SECTION (protected by mutex)",
+          "Print production message with current buffer state",
+          "Item successfully produced and added",
+          "Buffer size increases by 1"
+        ],
+        code: `buffer.add(item)
+System.out.println("Produced: " + item + " | Buffer: " + buffer)
+// Critical section: modifying shared buffer`,
+        example: "Produced: 3 | Buffer: [0, 1, 2, 3]\nBuffer size: 3→4"
+      },
+      {
+        title: "Producer Step 5: Release Mutex Lock",
+        description: "Unlock buffer for other thread",
+        details: [
+          "mutex.release() - Increment mutex count",
+          "Releases exclusive lock on buffer",
+          "Consumer can now acquire mutex if waiting",
+          "Critical section ends",
+          "After release: mutex = 1 (unlocked)"
+        ],
+        code: `mutex.release()
+// Unlock buffer
+// After release: mutex = 1`,
+        example: "mutex: 0 (locked) → release() → 1 (unlocked)"
+      },
+      {
+        title: "Producer Step 6: Signal Item Available",
+        description: "Increment 'full' semaphore",
+        details: [
+          "full.release() - Increment full count",
+          "Signals that one more item is available",
+          "Wakes up Consumer if it was waiting for items",
+          "After release: full count increases by 1",
+          "Consumer can now consume this item"
+        ],
+        code: `full.release()
+// Signal one more item available
+// After release: full = full + 1
+// Wakes up Consumer if waiting`,
+        example: "full: 2 → release() → 3 (3 items available to consume)"
+      },
+      {
+        title: "Producer Step 7: Sleep (Simulate Work)",
+        description: "Pause for 500ms before next production",
+        details: [
+          "Thread.sleep(500) - Sleep for 500 milliseconds",
+          "Simulates time taken to produce an item",
+          "Gives Consumer chance to catch up",
+          "Makes output easier to observe",
+          "Not required for correctness, just for simulation"
+        ],
+        code: `Thread.sleep(500)
+// Pause 500ms (0.5 seconds)
+// Simulates production time`,
+        example: "Producer pauses 0.5s between productions"
+      },
+      {
+        title: "Producer Step 8: Check Loop Condition",
+        description: "Determine if more items to produce",
+        details: [
+          "If item < MAX_ITEMS-1: Continue to next iteration",
+          "Go back to Step 1 and increment item",
+          "If item = MAX_ITEMS-1: Exit loop after this iteration",
+          "All 10 items produced, move to Step 9"
+        ],
+        code: `if (item < MAX_ITEMS - 1)
+    goto Producer Step 1 (item++)
+else
+    goto Producer Step 9`,
+        example: "item=8 → Continue loop\nitem=9 → Last iteration, then exit"
+      },
+      {
+        title: "Producer Step 9: Production Complete",
+        description: "All items produced, thread finishing",
+        details: [
+          "Print completion message",
+          "All MAX_ITEMS (10) items have been produced",
+          "Producer thread will terminate",
+          "Consumer may still be consuming remaining items"
+        ],
+        code: `System.out.println("Producer finished producing.")
+// Thread terminates`,
+        example: "✓ Producer finished producing. (All 10 items produced)"
+      }
+    ]
+  },
+  {
+    phase: "CONSUMER THREAD LOGIC",
+    phaseClass: "consumer-phase",
+    steps: [
+      {
+        title: "Consumer Step 1: Start Loop",
+        description: "Begin consuming items (loop MAX_ITEMS times)",
+        details: [
+          "Loop from i = 0 to i = 9 (MAX_ITEMS = 10)",
+          "Each iteration consumes one item",
+          "Total 10 items will be consumed",
+          "Loop counter is just for iteration count"
+        ],
+        code: `for (int i = 0; i < MAX_ITEMS; i++) {
+    // Consume one item
+}`,
+        example: "Iteration 1: consume 1st item, ... Iteration 10: consume 10th item"
+      },
+      {
+        title: "Consumer Step 2: Wait for Item",
+        description: "Acquire 'full' semaphore - wait if buffer empty",
+        details: [
+          "full.acquire() - Decrement full count",
+          "If full = 0 (buffer empty), Consumer BLOCKS here",
+          "Waits until Producer adds an item (releases full)",
+          "Ensures Consumer doesn't read from empty buffer",
+          "After acquire: full count decreases by 1"
+        ],
+        code: `full.acquire()
+// Wait if buffer is empty (full=0)
+// After acquire: full = full - 1`,
+        example: "If full=3 → acquire → full=2\nIf full=0 → WAIT until Producer adds item"
+      },
+      {
+        title: "Consumer Step 3: Acquire Mutex Lock",
+        description: "Get exclusive access to buffer",
+        details: [
+          "mutex.acquire() - Lock the buffer",
+          "If mutex = 0 (locked by Producer), Consumer BLOCKS",
+          "Ensures only one thread accesses buffer at a time",
+          "Critical section protection begins",
+          "After acquire: mutex = 0 (locked)"
+        ],
+        code: `mutex.acquire()
+// Lock buffer for exclusive access
+// If already locked, WAIT
+// After acquire: mutex = 0`,
+        example: "If mutex=1 → acquire → mutex=0 (locked)\nIf mutex=0 → WAIT until released"
+      },
+      {
+        title: "Consumer Step 4: Remove Item from Buffer",
+        description: "Consume item - remove from shared buffer (CRITICAL SECTION)",
+        details: [
+          "item = buffer.remove() - Remove first item from queue",
+          "This is the CRITICAL SECTION (protected by mutex)",
+          "FIFO order: removes oldest item",
+          "Print consumption message with remaining buffer",
+          "Buffer size decreases by 1"
+        ],
+        code: `int item = buffer.remove()
+System.out.println("Consumed: " + item + " | Buffer: " + buffer)
+// Critical section: modifying shared buffer`,
+        example: "Consumed: 2 | Buffer: [3, 4]\nBuffer: [2,3,4] → removed 2 → [3,4]"
+      },
+      {
+        title: "Consumer Step 5: Release Mutex Lock",
+        description: "Unlock buffer for other thread",
+        details: [
+          "mutex.release() - Increment mutex count",
+          "Releases exclusive lock on buffer",
+          "Producer can now acquire mutex if waiting",
+          "Critical section ends",
+          "After release: mutex = 1 (unlocked)"
+        ],
+        code: `mutex.release()
+// Unlock buffer
+// After release: mutex = 1`,
+        example: "mutex: 0 (locked) → release() → 1 (unlocked)"
+      },
+      {
+        title: "Consumer Step 6: Signal Empty Slot Available",
+        description: "Increment 'empty' semaphore",
+        details: [
+          "empty.release() - Increment empty count",
+          "Signals that one more empty slot is available",
+          "Wakes up Producer if it was waiting for space",
+          "After release: empty count increases by 1",
+          "Producer can now add another item"
+        ],
+        code: `empty.release()
+// Signal one more empty slot available
+// After release: empty = empty + 1
+// Wakes up Producer if waiting`,
+        example: "empty: 1 → release() → 2 (2 empty slots available)"
+      },
+      {
+        title: "Consumer Step 7: Sleep (Simulate Work)",
+        description: "Pause for 800ms before next consumption",
+        details: [
+          "Thread.sleep(800) - Sleep for 800 milliseconds",
+          "Simulates time taken to consume/process an item",
+          "Slower than Producer (800ms vs 500ms)",
+          "Buffer will tend to fill up over time",
+          "Not required for correctness, just for simulation"
+        ],
+        code: `Thread.sleep(800)
+// Pause 800ms (0.8 seconds)
+// Simulates consumption time`,
+        example: "Consumer pauses 0.8s between consumptions (slower than Producer)"
+      },
+      {
+        title: "Consumer Step 8: Check Loop Condition",
+        description: "Determine if more items to consume",
+        details: [
+          "If i < MAX_ITEMS-1: Continue to next iteration",
+          "Go back to Step 1 and increment i",
+          "If i = MAX_ITEMS-1: Exit loop after this iteration",
+          "All 10 items consumed, move to Step 9"
+        ],
+        code: `if (i < MAX_ITEMS - 1)
+    goto Consumer Step 1 (i++)
+else
+    goto Consumer Step 9`,
+        example: "i=8 → Continue loop\ni=9 → Last iteration, then exit"
+      },
+      {
+        title: "Consumer Step 9: Consumption Complete",
+        description: "All items consumed, thread finishing",
+        details: [
+          "Print completion message",
+          "All MAX_ITEMS (10) items have been consumed",
+          "Consumer thread will terminate",
+          "Buffer should be empty now",
+          "Program ends when both threads finish"
+        ],
+        code: `System.out.println("Consumer finished consuming.")
+// Thread terminates`,
+        example: "✓ Consumer finished consuming. (All 10 items consumed)"
+      }
+    ]
+  }
+];
+
+const root = document.getElementById('phases-root');
+
+function createPhaseElement(phaseObj, pIndex) {
+  const phase = document.createElement('div');
+  phase.className = 'phase';
+  
+  const header = document.createElement('div');
+  header.className = 'phase-header ' + phaseObj.phaseClass;
+  
+  const icon = document.createElement('div');
+  icon.style.width = '36px';
+  icon.style.height = '36px';
+  icon.style.display = 'grid';
+  icon.style.placeItems = 'center';
+  icon.style.borderRadius = '8px';
+  icon.style.background = 'rgba(255,255,255,0.06)';
+  icon.style.color = 'white';
+  icon.style.fontWeight = '700';
+  icon.textContent = '▶';
+  
+  const h2 = document.createElement('h2');
+  h2.textContent = phaseObj.phase;
+  
+  header.appendChild(icon);
+  header.appendChild(h2);
+  phase.appendChild(header);
+
+  const body = document.createElement('div');
+  body.className = 'phase-body';
+
+  phaseObj.steps.forEach((stepObj, sIndex) => {
+    const stepWrap = document.createElement('div');
+    stepWrap.className = 'step';
+    
+    const btn = document.createElement('button');
+    btn.className = 'step-button';
+    btn.type = 'button';
+
+    const iconDot = document.createElement('div');
+    iconDot.className = 'icon';
+    iconDot.textContent = String(sIndex + 1);
+    
+    const content = document.createElement('div');
+    content.className = 'step-content';
+    
+    const t = document.createElement('h3');
+    t.className = 'step-title';
+    t.textContent = stepObj.title;
+    
+    const d = document.createElement('p');
+    d.className = 'step-desc';
+    d.textContent = stepObj.description;
+
+    const chev = document.createElement('div');
+    chev.className = 'chev';
+    chev.innerHTML = '›';
+
+    content.appendChild(t);
+    content.appendChild(d);
+    btn.appendChild(iconDot);
+    btn.appendChild(content);
+    btn.appendChild(chev);
+    stepWrap.appendChild(btn);
+
+    const details = document.createElement('div');
+    details.className = 'details';
+    details.style.display = 'none';
+    
+    const detBlock = document.createElement('div');
+    detBlock.className = 'block';
+    const detTitle = document.createElement('h4');
+    detTitle.textContent = '📋 Detailed Steps:';
+    detBlock.appendChild(detTitle);
+    const ul = document.createElement('ul');
+    ul.className = 'list';
+    stepObj.details.forEach(it => {
+      const li = document.createElement('li');
+      li.textContent = it;
+      ul.appendChild(li);
+    });
+    detBlock.appendChild(ul);
+    details.appendChild(detBlock);
+
+    const codeBlock = document.createElement('div');
+    codeBlock.className = 'block';
+    const codeTitle = document.createElement('h4');
+    codeTitle.textContent = '💻 Pseudocode:';
+    const pre = document.createElement('pre');
+    pre.className = 'code';
+    pre.textContent = stepObj.code;
+    codeBlock.appendChild(codeTitle);
+    codeBlock.appendChild(pre);
+    details.appendChild(codeBlock);
+
+    const exBlock = document.createElement('div');
+    exBlock.className = 'block';
+    const exTitle = document.createElement('h4');
+    exTitle.textContent = '✨ Example:';
+    const ex = document.createElement('div');
+    ex.className = 'example';
+    ex.textContent = stepObj.example;
+    exBlock.appendChild(exTitle);
+    exBlock.appendChild(ex);
+    details.appendChild(exBlock);
+
+    btn.addEventListener('click', () => {
+      const allButtons = document.querySelectorAll('.step-button');
+      allButtons.forEach(b => b.classList.remove('current'));
+      const allChevs = document.querySelectorAll('.chev');
+      allChevs.forEach(c => c.classList.remove('rotate'));
+      btn.classList.add('current');
+      chev.classList.add('rotate');
+      
+      if (!btn.classList.contains('completed')) {
+        btn.classList.add('completed');
+        iconDot.classList.add('completed');
+      }
+      
+      const visible = details.style.display === 'block';
+      document.querySelectorAll('.details').forEach(el => el.style.display = 'none');
+      if (!visible) details.style.display = 'block';
+      else details.style.display = 'none';
+      
+      setTimeout(() => {
+        details.scrollIntoView({behavior: 'smooth', block: 'center'});
+      }, 120);
+    });
+
+    stepWrap.appendChild(details);
+
+    if (sIndex < phaseObj.steps.length - 1) {
+      const conn = document.createElement('div');
+      conn.className = 'connector';
+      const line = document.createElement('div');
+      line.className = 'line';
+      conn.appendChild(line);
+      stepWrap.appendChild(conn);
+    }
+
+    body.appendChild(stepWrap);
+  });
+
+  phase.appendChild(body);
+
+  if (pIndex < algorithm.length - 1) {
+    const outer = document.createElement('div');
+    outer.style.display = 'flex';
+    outer.style.justifyContent = 'center';
+    outer.style.margin = '14px 0';
+    const col = document.createElement('div');
+    col.style.display = 'flex';
+    col.style.flexDirection = 'column';
+    col.style.alignItems = 'center';
+    const line = document.createElement('div');
+    line.style.width = '2px';
+    line.style.height = '44px';
+    line.style.background = '#ddd6fe';
+    line.style.borderRadius = '2px';
+    const arrow = document.createElement('div');
+    arrow.style.transform = 'rotate(90deg)';
+    arrow.style.marginTop = '8px';
+    arrow.style.color = '#c026d3';
+    arrow.innerHTML = '&#8250;';
+    col.appendChild(line);
+    col.appendChild(arrow);
+    outer.appendChild(col);
+    phase.appendChild(outer);
+  }
+
+  return phase;
+}
+
+(function init() {
+  algorithm.forEach((ph, idx) => {
+    const el = createPhaseElement(ph, idx);
+    root.appendChild(el);
+  });
+})();
+
+const copyBtn = document.getElementById('copyBtn');
+const toggleBtn = document.getElementById('toggleBtn');
+const javaBlock = document.getElementById('javaBlock');
+const javaCode = document.getElementById('javaCode').innerText;
+
+copyBtn.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(javaCode);
+    copyBtn.textContent = 'Copied ✓';
+    setTimeout(() => copyBtn.textContent = 'Copy code', 1600);
+  } catch (e) {
+    copyBtn.textContent = 'Copy failed';
+    setTimeout(() => copyBtn.textContent = 'Copy code', 1600);
+  }
+});
+
+toggleBtn.addEventListener('click', () => {
+  if (javaBlock.style.display === 'none') {
+    javaBlock.style.display = 'block';
+    toggleBtn.textContent = 'Hide';
+  } else {
+    javaBlock.style.display = 'none';
+    toggleBtn.textContent = 'Show';
+  }
+});
+</script>
+</body>
+</html>
